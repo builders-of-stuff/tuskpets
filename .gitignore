@@ -1,4 +1,5 @@
 node_modules
+tuskpets/build/**
 
 # Output
 .output

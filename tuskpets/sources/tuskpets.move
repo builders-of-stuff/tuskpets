@@ -3,13 +3,14 @@
 module tuskpets::tuskpets;
 */
 
-module tuskpets::main;
+module tuskpets::walrus;
 
-use std::string::String;
+use std::string::{Self, String};
 use sui::address;
 use sui::display;
 use sui::package;
 use sui::object_bag::{Self, ObjectBag};
+use sui::clock::{Self, Clock};
 
 const BASE36: vector<u8> = b"0123456789abcdefghijklmnopqrstuvwxyz";
 
@@ -17,22 +18,167 @@ const BASE36: vector<u8> = b"0123456789abcdefghijklmnopqrstuvwxyz";
 const VISUALIZATION_SITE: address =
     @0xab25a686b8dcff5614d681c6d7619ecabaa350b4cf39d583cf2b675593c090b7;
 
-public struct MAIN has drop {}
+const EBusyWalrus: u64 = 0;
+const EIdleWalrus: u64 = 1;
+
+// === Activities ===
+const DIVING_SOFT_SHELL_CLAM: u64 = 101;
+const DIVING_SOFT_SHELL_CLAM_TIME: u64 = 10;
+const DIVING_SOFT_SHELL_CLAM_XP: u64 = 4;
+
+const DIVING_ARCTIC_SURFCLAM: u64 = 102;
+const DIVING_ARCTIC_SURFCLAM_TIME: u64 = 20;
+const DIVING_ARCTIC_SURFCLAM_XP: u64 = 12;
+
+const DIVING_GREENLAND_COCKLE: u64 = 103;
+const DIVING_GREENLAND_COCKLE_TIME: u64 = 30;
+const DIVING_GREENLAND_COCKLE_XP: u64 = 32;
+
+const MINING_COMPACT_SNOW: u64 = 201;
+const MINING_COMPACT_SNOW_TIME: u64 = 10;
+const MINING_COMPACT_SNOW_XP: u64 = 4;
+
+const MINING_ICE: u64 = 202;
+const MINING_ICE_TIME: u64 = 20;
+const MINING_ICE_XP: u64 = 12;
+
+const MINING_BLUE_ICE: u64 = 203;
+const MINING_BLUE_ICE_TIME: u64 = 30;
+const MINING_BLUE_ICE_XP: u64 = 32;
+
+const CRAFTING_SNOWMAN: u64 = 301;
+const CRAFTING_SNOWMAN_TIME: u64 = 10;
+const CRAFTING_SNOWMAN_XP: u64 = 10;
+
+const CRAFTING_ICE_HELMET: u64 = 302;
+const CRAFTING_ICE_HELMET_TIME: u64 = 20;
+const CRAFTING_ICE_HELMET_XP: u64 = 100;
+
+const CRAFTING_TUSK_BLADES: u64 = 303;
+const CRAFTING_TUSK_BLADES_TIME: u64 = 30;
+const CRAFTING_TUSK_BLADES_XP: u64 = 1000;
+
+
+
+
+// === XP Thresholds === 
+const LEVEL_2_XP: u64 = 83;
+const LEVEL_3_XP: u64 = 174;
+const LEVEL_4_XP: u64 = 276;
+const LEVEL_5_XP: u64 = 388;
+const LEVEL_6_XP: u64 = 512;
+const LEVEL_7_XP: u64 = 650;
+const LEVEL_8_XP: u64 = 801;
+const LEVEL_9_XP: u64 = 969;
+const LEVEL_10_XP: u64 = 1154;
+const LEVEL_11_XP: u64 = 1358;
+const LEVEL_12_XP: u64 = 1584;
+const LEVEL_13_XP: u64 = 1833;
+const LEVEL_14_XP: u64 = 2107;
+const LEVEL_15_XP: u64 = 2411;
+const LEVEL_16_XP: u64 = 2746;
+const LEVEL_17_XP: u64 = 3115;
+const LEVEL_18_XP: u64 = 3523;
+const LEVEL_19_XP: u64 = 3973;
+const LEVEL_20_XP: u64 = 4470;
+const LEVEL_21_XP: u64 = 5018;
+const LEVEL_22_XP: u64 = 5624;
+const LEVEL_23_XP: u64 = 6291;
+const LEVEL_24_XP: u64 = 7028;
+const LEVEL_25_XP: u64 = 7842;
+const LEVEL_26_XP: u64 = 8740;
+const LEVEL_27_XP: u64 = 9730;
+const LEVEL_28_XP: u64 = 10824;
+const LEVEL_29_XP: u64 = 12031;
+const LEVEL_30_XP: u64 = 13363;
+const LEVEL_31_XP: u64 = 14833;
+const LEVEL_32_XP: u64 = 16456;
+const LEVEL_33_XP: u64 = 18247;
+const LEVEL_34_XP: u64 = 20224;
+const LEVEL_35_XP: u64 = 22406;
+const LEVEL_36_XP: u64 = 24813;
+const LEVEL_37_XP: u64 = 27473;
+const LEVEL_38_XP: u64 = 30408;
+const LEVEL_39_XP: u64 = 33648;
+const LEVEL_40_XP: u64 = 37224;
+const LEVEL_41_XP: u64 = 41171;
+const LEVEL_42_XP: u64 = 45529;
+const LEVEL_43_XP: u64 = 50339;
+const LEVEL_44_XP: u64 = 55649;
+const LEVEL_45_XP: u64 = 61512;
+const LEVEL_46_XP: u64 = 67983;
+const LEVEL_47_XP: u64 = 75127;
+const LEVEL_48_XP: u64 = 83014;
+const LEVEL_49_XP: u64 = 91721;
+const LEVEL_50_XP: u64 = 101333;
+const LEVEL_51_XP: u64 = 111945;
+const LEVEL_52_XP: u64 = 123660;
+const LEVEL_53_XP: u64 = 136594;
+const LEVEL_54_XP: u64 = 150872;
+const LEVEL_55_XP: u64 = 166636;
+const LEVEL_56_XP: u64 = 184040;
+const LEVEL_57_XP: u64 = 203254;
+const LEVEL_58_XP: u64 = 224466;
+const LEVEL_59_XP: u64 = 247886;
+const LEVEL_60_XP: u64 = 273742;
+const LEVEL_61_XP: u64 = 302288;
+const LEVEL_62_XP: u64 = 333804;
+const LEVEL_63_XP: u64 = 368599;
+const LEVEL_64_XP: u64 = 407015;
+const LEVEL_65_XP: u64 = 449428;
+const LEVEL_66_XP: u64 = 496254;
+const LEVEL_67_XP: u64 = 547953;
+const LEVEL_68_XP: u64 = 605032;
+const LEVEL_69_XP: u64 = 668051;
+const LEVEL_70_XP: u64 = 737627;
+const LEVEL_71_XP: u64 = 814445;
+const LEVEL_72_XP: u64 = 899257;
+const LEVEL_73_XP: u64 = 992895;
+const LEVEL_74_XP: u64 = 1096278;
+const LEVEL_75_XP: u64 = 1210421;
+const LEVEL_76_XP: u64 = 1336443;
+const LEVEL_77_XP: u64 = 1475581;
+const LEVEL_78_XP: u64 = 1629200;
+const LEVEL_79_XP: u64 = 1798808;
+const LEVEL_80_XP: u64 = 1986068;
+const LEVEL_81_XP: u64 = 2192818;
+const LEVEL_82_XP: u64 = 2421087;
+const LEVEL_83_XP: u64 = 2673114;
+const LEVEL_84_XP: u64 = 2951373;
+const LEVEL_85_XP: u64 = 3258594;
+const LEVEL_86_XP: u64 = 3597792;
+const LEVEL_87_XP: u64 = 3972294;
+const LEVEL_88_XP: u64 = 4385776;
+const LEVEL_89_XP: u64 = 4842295;
+const LEVEL_90_XP: u64 = 5346332;
+const LEVEL_91_XP: u64 = 5902831;
+const LEVEL_92_XP: u64 = 6517253;
+const LEVEL_93_XP: u64 = 7195629;
+const LEVEL_94_XP: u64 = 7944614;
+const LEVEL_95_XP: u64 = 8771558;
+const LEVEL_96_XP: u64 = 9684577;
+const LEVEL_97_XP: u64 = 10692629;
+const LEVEL_98_XP: u64 = 11805606;
+const LEVEL_99_XP: u64 = 13034431;
+
+// === Structs ===
+
+public struct WALRUS has drop {}
 
 public struct Walrus has key, store {
     id: UID,
     b36_address: String,
     stats: WalrusStats,
     skills: WalrusSkills,
-    inventory: ObjectBag
+    inventory: ObjectBag,
+    current_activity: Option<u64>,
+    activity_start: Option<u64>,
 }
 
 public struct WalrusStats has store {
-    level: u8,
     health: u16,
     tuskfu: u8,
-    // hunting
-    swimming: u8,
+    hunting: u8,
     // Goes down a static amount, even more when training tuskfu
     // energy: u8,
     // Every level up, plus, minus, or same based on energy level 
@@ -41,9 +187,69 @@ public struct WalrusStats has store {
 
 public struct WalrusSkills has store {
     diving: u8,
+    mining: u8,
+    crafting: u8,
 }
 
-fun init(otw: MAIN, ctx: &mut TxContext) {
+// === Diving ===
+
+public struct SoftShellClam has key, store {
+    id: UID,
+    quantity: u64,
+}
+
+public struct ArcticSurfclam has key, store {
+    id: UID,
+    quantity: u64,
+}
+
+public struct GreenlandCockle has key, store {
+    id: UID,
+    quantity: u64,
+}
+
+// === Mining ===
+public struct CompactSnow has key, store {
+    id: UID,
+    quantity: u64,
+}
+
+public struct Ice has key, store {
+    id: UID,
+    quantity: u64,
+}
+
+public struct BlueIce has key, store {
+    id: UID,
+    quantity: u64,
+}
+
+// === Crafting ===
+public struct Snowman has key, store {
+    id: UID,
+    quantity: u64,
+}
+
+public struct IceHelmet has key, store {
+    id: UID,
+}
+
+// requires blue ice
+public struct TuskBlades has key, store {
+    id: UID,
+}
+
+// enum RewardType {
+//     A { id: UID, quantity: u64 },
+//     B { id: UID, quantity: u64 },
+//     C { id: UID, quantity: u64 },
+//     D { id: UID, quantity: u64 },
+// }
+
+// === Battle ===
+
+
+fun init(otw: WALRUS, ctx: &mut TxContext) {
     let publisher = package::claim(otw, ctx);
     let mut display = display::new<Walrus>(&publisher, ctx);
 
@@ -61,11 +267,225 @@ fun init(otw: MAIN, ctx: &mut TxContext) {
     transfer::public_transfer(display, ctx.sender());
 }
 
+// === Public-Mutative Functions ===
 
+public fun mint(ctx: &mut TxContext): Walrus {
+    let walrus = new(ctx);
+
+    walrus
+}
+
+entry fun start_activity(code: u64, walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext) {
+    assert!(option::is_none<u64>(&walrus.current_activity), EBusyWalrus);
+    assert!(option::is_none<u64>(&walrus.activity_start), EBusyWalrus);
+
+    let now = clock::timestamp_ms(clock);
+
+    option::fill<u64>(&mut walrus.current_activity, code);
+    option::fill<u64>(&mut walrus.activity_start, now);
+}
+
+public fun finish_activity(code: u64, walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext): RewardType {
+    assert!(option::is_some<u64>(&walrus.current_activity), EIdleWalrus);
+    assert!(option::is_some<u64>(&walrus.activity_start), EIdleWalrus);
+
+    let start = option::extract<u64>(&mut walrus.activity_start);
+    let now = clock::timestamp_ms(clock);
+
+    let elapsed_ms = now - start;
+    let elapsed_s = elapsed_ms / 1000;
+
+    // if (code == DIVING_SOFT_SHELL_CLAM) {
+    //     let intervals = elapsed_s / DIVING_SOFT_SHELL_CLAM_TIME;
+    //     let xp = intervals * DIVING_SOFT_SHELL_CLAM_XP;
+    //     return RewardType::A {
+    //         id: object::new(ctx),
+    //         quantity: intervals,
+    //     }
+    // } else if (code == DIVING_ARCTIC_SURFCLAM) {
+    //     let intervals = elapsed_s / DIVING_ARCTIC_SURFCLAM_TIME;
+    //     let xp = intervals * DIVING_ARCTIC_SURFCLAM_XP;
+    //     return RewardType::B {
+    //         id: object::new(ctx),
+    //         quantity: intervals,
+    //     }
+    // } else if (code == DIVING_GREENLAND_COCKLE) {
+    //     let intervals = elapsed_s / DIVING_GREENLAND_COCKLE_TIME;
+    //     let xp = intervals *
+    //     DIVING_GREENLAND_COCKLE_XP;
+    //     return RewardType::C {
+    //         id: object::new(ctx),
+    //         quantity: intervals,
+    //     }
+    // };
+
+    // RewardType::D { 
+    //     id: object::new(ctx),
+    //     quantity: 2,
+    // }
+
+    if (code == DIVING_SOFT_SHELL_CLAM) {
+        let intervals = elapsed_s / DIVING_SOFT_SHELL_CLAM_TIME;
+        let xp = intervals * DIVING_SOFT_SHELL_CLAM_XP;
+        return SoftShellClam {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+        
+
+        // calculate reward quantity
+    } else if (code == DIVING_ARCTIC_SURFCLAM) {
+        let intervals = elapsed_s / DIVING_ARCTIC_SURFCLAM_TIME;
+        let xp = intervals * DIVING_ARCTIC_SURFCLAM_XP;
+        return ArcticShellClam {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+    
+    } else if (code == DIVING_GREENLAND_COCKLE) {
+        let intervals = elapsed_s / DIVING_GREENLAND_COCKLE_TIME;
+        let xp = intervals * DIVING_GREENLAND_COCKLE_XP;
+        return GreenlandCockle {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+
+    } else if (code == MINING_COMPACT_SNOW) {
+        let intervals = elapsed_s / MINING_COMPACT_SNOW_TIME;
+        let xp = intervals * MINING_COMPACT_SNOW_XP;
+        return CompactSnow {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+        
+    } else if (code == MINING_ICE) {
+        let intervals = elapsed_s / MINING_ICE_TIME;
+        let xp = intervals * MINING_ICE_XP;
+        return Ice {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+        
+    } else if (code == MINING_BLUE_ICE) {
+        let intervals = elapsed_s / MINING_BLUE_ICE_TIME;
+        let xp = intervals * MINING_BLUE_ICE_XP;
+        return BlueIce {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+        
+    } else if (code == CRAFTING_SNOWMAN) {
+        let intervals = elapsed_s / CRAFTING_SNOWMAN_TIME;
+        let xp = intervals * CRAFTING_SNOWMAN_XP;
+        return Snowman {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+        
+    } else if (code == CRAFTING_ICE_HELMET) {
+        let intervals = elapsed_s / CRAFTING_ICE_HELMET_TIME;
+        let xp = intervals * CRAFTING_ICE_HELMET_XP;
+        return IceHelmet {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+        
+    } else if (code == CRAFTING_TUSK_BLADES) {
+        let intervals = elapsed_s / CRAFTING_TUSK_BLADES_TIME;
+        let xp = intervals * CRAFTING_TUSK_BLADES_XP;
+        return TuskBlades {
+            id: object::new(ctx),
+            quantity: intervals,
+        }
+        
+    }
+
+    TuskBlades {
+        id: object::new(ctx),
+        quantity: intervals,
+    }
+
+
+}
+
+
+// === Admin Functions ===
+
+entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
+    let Walrus {
+        id,
+        b36_address: _,
+        stats,
+        skills,
+        inventory,
+        current_activity: _,
+        activity_start: _,
+    } = walrus;
+    let WalrusStats {
+        health: _,
+        tuskfu: _,
+        hunting: _,
+     } = stats;
+     let WalrusSkills {
+        diving: _,
+        mining: _,
+        crafting: _,
+     } = skills;
+
+    // while (!(object_bag::is_empty(&inventory))) {
+    //     // You'll need to implement logic to handle each object type
+    //     // This is just an example and would need to be adapted to your specific case
+    //     let (_key, _value) = object_bag::remove(&mut inventory);
+    //     // Handle the removed object appropriately
+    // };
+    
+    // Now that the bag is empty, we can destroy it
+    object_bag::destroy_empty(inventory);
+
+    object::delete(id);
+}
+
+entry fun test_clock(clock: &Clock, ctx: &mut TxContext): u64 {
+    let now = clock::timestamp_ms(clock);
+
+    now
+}
+
+// Gathering - Rocks, soft snow, hard snow, ice
+
+// Crafting - Snowman, Ice helmet, Tusk blades/tips, flipper shields
+
+
+// === Private Functions ===
+
+fun new(ctx: &mut TxContext): Walrus {
+    let id = object::new(ctx);
+    let b36_address = to_b36(id.uid_to_address());
+    let stats = WalrusStats {
+        health: 100,
+        tuskfu: 1,
+        hunting: 1,
+    };
+    let skills = WalrusSkills { 
+        diving: 1,
+        mining: 1,
+        crafting: 1,
+     };
+    let inventory = object_bag::new(ctx);
+
+    Walrus {
+        id,
+        b36_address,
+        stats,
+        skills,
+        inventory,
+        current_activity: option::none(),
+        activity_start: option::none(),
+    }
+}
 
 
 // Walrus-site =============================================================================
-
 public fun to_b36(addr: address): String {
     let source = address::to_bytes(addr);
     let size = 2 * vector::length(&source);

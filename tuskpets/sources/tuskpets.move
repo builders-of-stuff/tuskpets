@@ -20,6 +20,18 @@ const VISUALIZATION_SITE: address =
 
 const EBusyWalrus: u64 = 0;
 const EIdleWalrus: u64 = 1;
+const EActivityFinishTooSoon: u64 = 2;
+
+// === Items === 
+const SOFT_SHELL_CLAM: vector<u8> = b"soft_shell_clam";
+const ARCTIC_SURFCLAM: vector<u8> = b"arctic_surfclam";
+const GREENLAND_COCKLE: vector<u8> = b"greenland_cockle";
+const COMPACT_SNOW: vector<u8> = b"compact_snow";
+const ICE: vector<u8> = b"ice";
+const BLUE_ICE: vector<u8> = b"blue_ice";
+const SNOWMAN: vector<u8> = b"snowman";
+const ICE_HELMET: vector<u8> = b"ice_helmet";
+const TUSK_BLADES: vector<u8> = b"tusk_blades";
 
 // === Activities ===
 const DIVING_SOFT_SHELL_CLAM: u64 = 101;
@@ -57,9 +69,6 @@ const CRAFTING_ICE_HELMET_XP: u64 = 100;
 const CRAFTING_TUSK_BLADES: u64 = 303;
 const CRAFTING_TUSK_BLADES_TIME: u64 = 30;
 const CRAFTING_TUSK_BLADES_XP: u64 = 1000;
-
-
-
 
 // === XP Thresholds === 
 const LEVEL_2_XP: u64 = 83;
@@ -178,7 +187,7 @@ public struct Walrus has key, store {
 public struct WalrusStats has store {
     health: u16,
     tuskfu: u8,
-    hunting: u8,
+    swimming: u8,
     // Goes down a static amount, even more when training tuskfu
     // energy: u8,
     // Every level up, plus, minus, or same based on energy level 
@@ -186,65 +195,18 @@ public struct WalrusStats has store {
 }
 
 public struct WalrusSkills has store {
-    diving: u8,
-    mining: u8,
-    crafting: u8,
+    diving_xp: u64,
+    mining_xp: u64,
+    crafting_xp: u64,
 }
 
 // === Diving ===
 
-public struct SoftShellClam has key, store {
+public struct Item has key, store {
     id: UID,
+    `type`: String,
     quantity: u64,
 }
-
-public struct ArcticSurfclam has key, store {
-    id: UID,
-    quantity: u64,
-}
-
-public struct GreenlandCockle has key, store {
-    id: UID,
-    quantity: u64,
-}
-
-// === Mining ===
-public struct CompactSnow has key, store {
-    id: UID,
-    quantity: u64,
-}
-
-public struct Ice has key, store {
-    id: UID,
-    quantity: u64,
-}
-
-public struct BlueIce has key, store {
-    id: UID,
-    quantity: u64,
-}
-
-// === Crafting ===
-public struct Snowman has key, store {
-    id: UID,
-    quantity: u64,
-}
-
-public struct IceHelmet has key, store {
-    id: UID,
-}
-
-// requires blue ice
-public struct TuskBlades has key, store {
-    id: UID,
-}
-
-// enum RewardType {
-//     A { id: UID, quantity: u64 },
-//     B { id: UID, quantity: u64 },
-//     C { id: UID, quantity: u64 },
-//     D { id: UID, quantity: u64 },
-// }
 
 // === Battle ===
 
@@ -285,127 +247,116 @@ entry fun start_activity(code: u64, walrus: &mut Walrus, clock: &Clock, ctx: &mu
     option::fill<u64>(&mut walrus.activity_start, now);
 }
 
-public fun finish_activity(code: u64, walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext): RewardType {
+public fun finish_activity(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext): Item {
     assert!(option::is_some<u64>(&walrus.current_activity), EIdleWalrus);
     assert!(option::is_some<u64>(&walrus.activity_start), EIdleWalrus);
 
+    let code = option::extract<u64>(&mut walrus.current_activity);
     let start = option::extract<u64>(&mut walrus.activity_start);
     let now = clock::timestamp_ms(clock);
 
     let elapsed_ms = now - start;
     let elapsed_s = elapsed_ms / 1000;
 
-    // if (code == DIVING_SOFT_SHELL_CLAM) {
-    //     let intervals = elapsed_s / DIVING_SOFT_SHELL_CLAM_TIME;
-    //     let xp = intervals * DIVING_SOFT_SHELL_CLAM_XP;
-    //     return RewardType::A {
-    //         id: object::new(ctx),
-    //         quantity: intervals,
-    //     }
-    // } else if (code == DIVING_ARCTIC_SURFCLAM) {
-    //     let intervals = elapsed_s / DIVING_ARCTIC_SURFCLAM_TIME;
-    //     let xp = intervals * DIVING_ARCTIC_SURFCLAM_XP;
-    //     return RewardType::B {
-    //         id: object::new(ctx),
-    //         quantity: intervals,
-    //     }
-    // } else if (code == DIVING_GREENLAND_COCKLE) {
-    //     let intervals = elapsed_s / DIVING_GREENLAND_COCKLE_TIME;
-    //     let xp = intervals *
-    //     DIVING_GREENLAND_COCKLE_XP;
-    //     return RewardType::C {
-    //         id: object::new(ctx),
-    //         quantity: intervals,
-    //     }
-    // };
-
-    // RewardType::D { 
-    //     id: object::new(ctx),
-    //     quantity: 2,
-    // }
+    assert!(elapsed_s > 0, EActivityFinishTooSoon);
 
     if (code == DIVING_SOFT_SHELL_CLAM) {
         let intervals = elapsed_s / DIVING_SOFT_SHELL_CLAM_TIME;
         let xp = intervals * DIVING_SOFT_SHELL_CLAM_XP;
-        return SoftShellClam {
+        walrus.skills.diving_xp = walrus.skills.diving_xp + xp;
+        
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(SOFT_SHELL_CLAM),
             quantity: intervals,
         }
-        
-
-        // calculate reward quantity
     } else if (code == DIVING_ARCTIC_SURFCLAM) {
         let intervals = elapsed_s / DIVING_ARCTIC_SURFCLAM_TIME;
         let xp = intervals * DIVING_ARCTIC_SURFCLAM_XP;
-        return ArcticShellClam {
+        walrus.skills.diving_xp = walrus.skills.diving_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(ARCTIC_SURFCLAM),
             quantity: intervals,
         }
-    
     } else if (code == DIVING_GREENLAND_COCKLE) {
         let intervals = elapsed_s / DIVING_GREENLAND_COCKLE_TIME;
         let xp = intervals * DIVING_GREENLAND_COCKLE_XP;
-        return GreenlandCockle {
+        walrus.skills.diving_xp = walrus.skills.diving_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(GREENLAND_COCKLE),
             quantity: intervals,
         }
-
     } else if (code == MINING_COMPACT_SNOW) {
         let intervals = elapsed_s / MINING_COMPACT_SNOW_TIME;
         let xp = intervals * MINING_COMPACT_SNOW_XP;
-        return CompactSnow {
+        walrus.skills.mining_xp = walrus.skills.mining_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(COMPACT_SNOW),
             quantity: intervals,
         }
-        
     } else if (code == MINING_ICE) {
         let intervals = elapsed_s / MINING_ICE_TIME;
         let xp = intervals * MINING_ICE_XP;
-        return Ice {
+        walrus.skills.mining_xp = walrus.skills.mining_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(ICE),
             quantity: intervals,
         }
-        
     } else if (code == MINING_BLUE_ICE) {
         let intervals = elapsed_s / MINING_BLUE_ICE_TIME;
         let xp = intervals * MINING_BLUE_ICE_XP;
-        return BlueIce {
+        walrus.skills.mining_xp = walrus.skills.mining_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(BLUE_ICE),
             quantity: intervals,
         }
-        
     } else if (code == CRAFTING_SNOWMAN) {
         let intervals = elapsed_s / CRAFTING_SNOWMAN_TIME;
         let xp = intervals * CRAFTING_SNOWMAN_XP;
-        return Snowman {
+        walrus.skills.crafting_xp = walrus.skills.crafting_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(SNOWMAN),
             quantity: intervals,
         }
-        
     } else if (code == CRAFTING_ICE_HELMET) {
         let intervals = elapsed_s / CRAFTING_ICE_HELMET_TIME;
         let xp = intervals * CRAFTING_ICE_HELMET_XP;
-        return IceHelmet {
+        walrus.skills.crafting_xp = walrus.skills.crafting_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(ICE_HELMET),
             quantity: intervals,
         }
-        
     } else if (code == CRAFTING_TUSK_BLADES) {
         let intervals = elapsed_s / CRAFTING_TUSK_BLADES_TIME;
         let xp = intervals * CRAFTING_TUSK_BLADES_XP;
-        return TuskBlades {
+        walrus.skills.crafting_xp = walrus.skills.crafting_xp + xp;
+
+        return Item {
             id: object::new(ctx),
+            `type`: string::utf8(TUSK_BLADES),
             quantity: intervals,
         }
-        
-    }
+    };
 
-    TuskBlades {
+    Item {
         id: object::new(ctx),
-        quantity: intervals,
+        `type`: string::utf8(b"unknown"),
+        quantity: 0,
     }
-
-
 }
 
 
@@ -424,12 +375,12 @@ entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
     let WalrusStats {
         health: _,
         tuskfu: _,
-        hunting: _,
+        swimming: _,
      } = stats;
      let WalrusSkills {
-        diving: _,
-        mining: _,
-        crafting: _,
+        diving_xp: _,
+        mining_xp: _,
+        crafting_xp: _,
      } = skills;
 
     // while (!(object_bag::is_empty(&inventory))) {
@@ -464,12 +415,12 @@ fun new(ctx: &mut TxContext): Walrus {
     let stats = WalrusStats {
         health: 100,
         tuskfu: 1,
-        hunting: 1,
+        swimming: 1,
     };
     let skills = WalrusSkills { 
-        diving: 1,
-        mining: 1,
-        crafting: 1,
+        diving_xp: 0,
+        mining_xp: 0,
+        crafting_xp: 0,
      };
     let inventory = object_bag::new(ctx);
 

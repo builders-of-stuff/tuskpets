@@ -191,6 +191,7 @@ public struct WalrusStats has store {
 // - Hunting
 // - battling
 // - using items
+// - Display of items and walrus
 
 public struct WalrusSkills has store {
     attack_xp: u8,
@@ -349,7 +350,7 @@ public fun finish_activity(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxConte
 
     Item {
         id: object::new(ctx),
-        `type`: string::utf8(b"unknown"),
+        `type`: string::utf8(b"nothing"),
         quantity: 0,
     }
 }
@@ -386,9 +387,8 @@ entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
     //     // Handle the removed object appropriately
     // };
 
-    object_bag::destroy_empty(foes);
-
     // Now that the bag is empty, we can destroy it
+    object_bag::destroy_empty(foes);
     object_bag::destroy_empty(inventory);
 
     object::delete(id);

@@ -15,6 +15,9 @@ export default tseslint.config(
       globals: {
         ...globals.browser,
         ...globals.node
+      },
+      rules: {
+        '@typescript-eslint/no-explicit-any': 'off'
       }
     }
   },

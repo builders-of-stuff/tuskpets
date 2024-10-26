@@ -1,8 +1,3 @@
-/*
-/// Module: tuskpets
-module tuskpets::tuskpets;
-*/
-
 module tuskpets::walrus;
 
 use std::string::{Self, String};
@@ -34,6 +29,10 @@ const ICE_HELMET: vector<u8> = b"ice_helmet";
 const TUSK_BLADES: vector<u8> = b"tusk_blades";
 
 // === Activities ===
+const HUNTING: u64 = 42;
+const HUNTING_TIME: u64 = 22;
+const HUNTING_XP: u64 = 8;
+
 const DIVING_SOFT_SHELL_CLAM: u64 = 101;
 const DIVING_SOFT_SHELL_CLAM_TIME: u64 = 10;
 const DIVING_SOFT_SHELL_CLAM_XP: u64 = 4;
@@ -171,7 +170,6 @@ const LEVEL_98_XP: u64 = 11805606;
 const LEVEL_99_XP: u64 = 13034431;
 
 // === Structs ===
-
 public struct WALRUS has drop {}
 
 public struct Walrus has key, store {
@@ -180,36 +178,34 @@ public struct Walrus has key, store {
     stats: WalrusStats,
     skills: WalrusSkills,
     inventory: ObjectBag,
+    foes: ObjectBag,
     current_activity: Option<u64>,
     activity_start: Option<u64>,
 }
 
 public struct WalrusStats has store {
     health: u16,
-    tuskfu: u8,
-    swimming: u8,
-    // Goes down a static amount, even more when training tuskfu
-    // energy: u8,
-    // Every level up, plus, minus, or same based on energy level 
-    // weight: u16,
 }
 
+// Todo: 
+// - Hunting
+// - battling
+// - using items
+
 public struct WalrusSkills has store {
+    attack_xp: u8,
+    defence_xp: u8,
+    hunting_xp: u8,
     diving_xp: u64,
     mining_xp: u64,
     crafting_xp: u64,
 }
-
-// === Diving ===
 
 public struct Item has key, store {
     id: UID,
     `type`: String,
     quantity: u64,
 }
-
-// === Battle ===
-
 
 fun init(otw: WALRUS, ctx: &mut TxContext) {
     let publisher = package::claim(otw, ctx);
@@ -230,7 +226,6 @@ fun init(otw: WALRUS, ctx: &mut TxContext) {
 }
 
 // === Public-Mutative Functions ===
-
 public fun mint(ctx: &mut TxContext): Walrus {
     let walrus = new(ctx);
 
@@ -361,7 +356,6 @@ public fun finish_activity(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxConte
 
 
 // === Admin Functions ===
-
 entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
     let Walrus {
         id,
@@ -369,15 +363,17 @@ entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
         stats,
         skills,
         inventory,
+        foes,
         current_activity: _,
         activity_start: _,
     } = walrus;
     let WalrusStats {
         health: _,
-        tuskfu: _,
-        swimming: _,
      } = stats;
      let WalrusSkills {
+        attack_xp: _,
+        defence_xp: _,
+        hunting_xp: _,
         diving_xp: _,
         mining_xp: _,
         crafting_xp: _,
@@ -389,7 +385,9 @@ entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
     //     let (_key, _value) = object_bag::remove(&mut inventory);
     //     // Handle the removed object appropriately
     // };
-    
+
+    object_bag::destroy_empty(foes);
+
     // Now that the bag is empty, we can destroy it
     object_bag::destroy_empty(inventory);
 
@@ -408,21 +406,22 @@ entry fun test_clock(clock: &Clock, ctx: &mut TxContext): u64 {
 
 
 // === Private Functions ===
-
 fun new(ctx: &mut TxContext): Walrus {
     let id = object::new(ctx);
     let b36_address = to_b36(id.uid_to_address());
     let stats = WalrusStats {
         health: 100,
-        tuskfu: 1,
-        swimming: 1,
     };
     let skills = WalrusSkills { 
+        attack_xp: 0,
+        defence_xp: 0,
+        hunting_xp: 0,
         diving_xp: 0,
         mining_xp: 0,
         crafting_xp: 0,
      };
     let inventory = object_bag::new(ctx);
+    let foes = object_bag::new(ctx);
 
     Walrus {
         id,
@@ -430,13 +429,12 @@ fun new(ctx: &mut TxContext): Walrus {
         stats,
         skills,
         inventory,
+        foes,
         current_activity: option::none(),
         activity_start: option::none(),
     }
 }
 
-
-// Walrus-site =============================================================================
 public fun to_b36(addr: address): String {
     let source = address::to_bytes(addr);
     let size = 2 * vector::length(&source);

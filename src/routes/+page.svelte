@@ -1,4 +1,10 @@
-<h1>Welcome to SvelteKit</h1>
-<p>
-  Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation
-</p>
+<script lang="ts">
+  import {
+    ConnectButton,
+    testnetWalletAdapter
+  } from '@builders-of-stuff/svelte-sui-wallet-adapter';
+
+  let what = $state(0);
+</script>
+
+<ConnectButton walletAdapter={testnetWalletAdapter} />

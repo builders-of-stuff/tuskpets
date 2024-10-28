@@ -46,7 +46,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@builders-of-stuff/svelte-sui-wallet-adapter": "^1.1.2",
+    "@builders-of-stuff/svelte-sui-wallet-adapter": "1.1.3",
     "@mysten/sui": "^1.13.0",
     "phosphor-svelte": "^2.0.1"
   }

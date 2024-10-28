@@ -1,7 +1,14 @@
 <script>
+  import * as Sidebar from '$lib/components/ui/sidebar/index';
+
+  import AppSidebar from './app-sidebar.svelte';
   import '../app.css';
 </script>
 
-<div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-  <slot></slot>
-</div>
+<Sidebar.Provider>
+  <AppSidebar />
+  <main>
+    <Sidebar.Trigger />
+    <slot></slot>
+  </main>
+</Sidebar.Provider>

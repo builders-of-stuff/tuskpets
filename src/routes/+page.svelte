@@ -5,6 +5,7 @@
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
 
   import { Button } from '$lib/components/ui/button';
+
   import {
     dropWalrus,
     finishActivity,

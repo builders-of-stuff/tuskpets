@@ -28,11 +28,13 @@ const SNOWMAN: vector<u8> = b"snowman";
 const ICE_HELMET: vector<u8> = b"ice_helmet";
 const TUSK_BLADES: vector<u8> = b"tusk_blades";
 
-// === Activities ===
-const HUNTING: u64 = 42;
-const HUNTING_TIME: u64 = 22;
-const HUNTING_XP: u64 = 8;
+// === Foes ===
+const AGGRESSIVE_CRABS: vector<u8> = b"aggressive_crabs";
+const RIVAL_WALRUS: vector<u8> = b"rival_walrus";
+const ARCTIC_WOLVES: vector<u8> = b"arctic_wolves";
+const POLAR_BEAR: vector<u8> = b"polar_bear";
 
+// === Activities ===
 const DIVING_SOFT_SHELL_CLAM: u64 = 101;
 const DIVING_SOFT_SHELL_CLAM_TIME: u64 = 10;
 const DIVING_SOFT_SHELL_CLAM_XP: u64 = 4;
@@ -68,6 +70,23 @@ const CRAFTING_ICE_HELMET_XP: u64 = 100;
 const CRAFTING_TUSK_BLADES: u64 = 303;
 const CRAFTING_TUSK_BLADES_TIME: u64 = 30;
 const CRAFTING_TUSK_BLADES_XP: u64 = 1000;
+
+// === Hunting ===
+const HUNTING_AGGRESSIVE_CRABS: u64 = 401;
+const HUNTING_AGGRESSIVE_CRABS_TIME: u64 = 22;
+const HUNTING_AGGRESSIVE_CRABS_XP: u64 = 10;
+
+const HUNTING_RIVAL_WALRUS: u64 = 402;
+const HUNTING_RIVAL_WALRUS_TIME: u64 = 33;
+const HUNTING_RIVAL_WALRUS_XP: u64 = 30;
+
+const HUNTING_ARCTIC_WOLVES: u64 = 403;
+const HUNTING_ARCTIC_WOLVES_TIME: u64 = 44;
+const HUNTING_ARCTIC_WOLVES_XP: u64 = 60;
+
+const HUNTING_POLAR_BEAR: u64 = 404;
+const HUNTING_POLAR_BEAR_TIME: u64 = 55;
+const HUNTING_POLAR_BEAR_XP: u64 = 200;
 
 // === XP Thresholds === 
 const LEVEL_2_XP: u64 = 83;
@@ -177,26 +196,28 @@ public struct Walrus has key, store {
     b36_address: String,
     stats: WalrusStats,
     skills: WalrusSkills,
-    inventory: ObjectBag,
-    foes: ObjectBag,
     current_activity: Option<u64>,
     activity_start: Option<u64>,
+    inventory: ObjectBag,
+    foes: ObjectBag,
 }
 
 public struct WalrusStats has store {
-    health: u16,
+    health: u64,
 }
 
 // Todo: 
 // - Hunting
 // - battling
 // - using items
+// - Timer/limits logic
 // - Display of items and walrus
+// - New item vs update existing item quantity logic
 
 public struct WalrusSkills has store {
-    attack_xp: u8,
-    defence_xp: u8,
-    hunting_xp: u8,
+    attack_xp: u64,
+    defence_xp: u64,
+    hunting_xp: u64,
     diving_xp: u64,
     mining_xp: u64,
     crafting_xp: u64,
@@ -206,6 +227,14 @@ public struct Item has key, store {
     id: UID,
     `type`: String,
     quantity: u64,
+}
+
+public struct Foe has store {
+    `type`: String,
+    quantity: u64,
+    health: u64,
+    attack: u64,
+    defence: u64,
 }
 
 fun init(otw: WALRUS, ctx: &mut TxContext) {
@@ -355,6 +384,35 @@ public fun finish_activity(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxConte
     }
 }
 
+entry fun finish_hunting(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext) {
+    assert!(option::is_some<u64>(&walrus.current_activity), EIdleWalrus);
+    assert!(option::is_some<u64>(&walrus.activity_start), EIdleWalrus);
+
+    let code = option::extract<u64>(&mut walrus.current_activity);
+    let start = option::extract<u64>(&mut walrus.activity_start);
+    let now = clock::timestamp_ms(clock);
+
+    let elapsed_ms = now - start;
+    let elapsed_s = elapsed_ms / 1000;
+
+    assert!(elapsed_s > 0, EActivityFinishTooSoon);
+
+    if (code == HUNTING_AGGRESSIVE_CRABS) {
+        let intervals = elapsed_s / HUNTING_AGGRESSIVE_CRABS_TIME;
+        let xp = intervals * HUNTING_AGGRESSIVE_CRABS_XP;
+        walrus.skills.hunting_xp = walrus.skills.hunting_xp + xp;
+
+        let foe = Foe {
+            `type`: string::utf8(AGGRESSIVE_CRABS),
+            quantity: intervals,
+            health: 100,
+            attack: 10,
+            defence: 5,
+        }
+    }
+
+}
+
 
 // === Admin Functions ===
 entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
@@ -399,11 +457,6 @@ entry fun test_clock(clock: &Clock, ctx: &mut TxContext): u64 {
 
     now
 }
-
-// Gathering - Rocks, soft snow, hard snow, ice
-
-// Crafting - Snowman, Ice helmet, Tusk blades/tips, flipper shields
-
 
 // === Private Functions ===
 fun new(ctx: &mut TxContext): Walrus {

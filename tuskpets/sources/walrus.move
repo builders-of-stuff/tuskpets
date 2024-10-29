@@ -215,6 +215,9 @@ public fun finish_skill(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext)
 
     assert!(elapsed_s > 0, EActivityFinishTooSoon);
 
+    let diving_lvl = xp_to_level(walrus.skills.diving_xp);
+    let crafting_lvl = xp_to_level(walrus.skills.crafting_xp);
+
     if (code == DIVING_SOFT_SHELL_CLAM) {
         let intervals = elapsed_s / DIVING_SOFT_SHELL_CLAM_TIME;
         let xp = intervals * DIVING_SOFT_SHELL_CLAM_XP;

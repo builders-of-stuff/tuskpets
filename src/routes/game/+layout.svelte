@@ -2,9 +2,9 @@
   import * as Sidebar from '$lib/components/ui/sidebar/index';
   import { IsMobile } from '$lib/hooks/is-mobile.svelte';
 
-  import AppSidebar from './app-sidebar.svelte';
   import AppNavbar from './app-navbar.svelte';
-  import '../app.css';
+  import AppSidebar from './app-sidebar.svelte';
+  import '../../app.css';
 
   let { children } = $props();
 

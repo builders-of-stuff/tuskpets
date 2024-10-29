@@ -4,3 +4,5 @@
     testnetWalletAdapter as walletAdapter
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
 </script>
+
+asdf

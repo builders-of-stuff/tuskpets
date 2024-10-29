@@ -15,7 +15,7 @@
   <AppSidebar />
   <main class="w-full">
     <div
-      class={`flex items-center ${isMobile.current ? `justify-between` : 'justify-end'}`}
+      class={`mx-3 my-2 flex flex-wrap items-center ${isMobile.current ? `justify-between` : 'justify-end'}`}
     >
       {#if isMobile.current}
         <Sidebar.Trigger />

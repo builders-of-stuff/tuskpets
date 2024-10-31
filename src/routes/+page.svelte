@@ -1,26 +1,63 @@
-<script>
+<script lang="ts">
   import {
     ConnectButton,
     testnetWalletAdapter as walletAdapter
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
+  import { untrack } from 'svelte';
 
   import * as Carousel from '$lib/components/ui/carousel/index';
   import * as Card from '$lib/components/ui/card/index';
+  import { Button } from '$lib/components/ui/button/index';
 
   import TuskPet258 from '$lib/assets/tuskpets-258px.png';
 
   import '../app.css';
+  import { PACKAGE_ID } from '$lib/shared/shared.constant';
 
-  const navigation = [
-    // { name: 'Product', href: '#' },
-    // { name: 'Features', href: '#' },
-    // { name: 'Marketplace', href: '#' },
-    // { name: 'Company', href: '#' }
-  ];
+  let hasCheckedOwnedObjects = $state(false);
+
+  let ownedPets = $state([] as any);
+  const hasOwnedPets = $derived(ownedPets?.length > 0);
+
+  $effect(() => {
+    console.log('ownedPets: ', $state.snapshot(ownedPets));
+  });
+
+  /**
+   * Fetch existing walrus upon connect
+   */
+  $effect(() => {
+    if (!walletAdapter.isConnected || hasCheckedOwnedObjects) {
+      return;
+    }
+
+    untrack(() => {
+      (async () => {
+        const ownedObjects = await walletAdapter.suiClient.getOwnedObjects({
+          owner: walletAdapter?.currentAccount?.address as any,
+          filter: {
+            StructType: `${PACKAGE_ID}::walrus::Walrus`
+          },
+          options: {
+            showContent: true,
+            showDisplay: true,
+            showType: true
+          }
+        });
+
+        console.log('ownedObjects: ', ownedObjects);
+
+        const walruses = ownedObjects?.data?.map((obj: any) => obj.data.objectId);
+        ownedPets = walruses;
+
+        hasCheckedOwnedObjects = true;
+      })();
+    });
+  });
 </script>
 
-<!-- Hero section -->
 <div class="bg-gray-900">
+  <!-- Navbar -->
   <header class="absolute inset-x-0 top-0 z-50">
     <nav aria-label="Global" class="flex items-center justify-between p-6 lg:px-8">
       <div class="flex lg:flex-1">
@@ -35,23 +72,17 @@
           class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-400"
         >
           <span class="sr-only">Connect</span>
-
           <ConnectButton {walletAdapter} />
         </button>
       </div>
-      <div class="hidden lg:flex lg:gap-x-12">
-        {#each navigation as item}
-          <a href={item.href} class="text-sm/6 font-semibold text-white">
-            {item.name}
-          </a>
-        {/each}
-      </div>
+
       <div class="hidden lg:flex lg:flex-1 lg:justify-end">
         <ConnectButton {walletAdapter} />
       </div>
     </nav>
   </header>
 
+  <!-- Title -->
   <div class="relative isolate pt-14">
     <div
       aria-hidden="true"
@@ -70,68 +101,49 @@
           >
             Tuskpets
           </h1>
-          <p class="mt-8 text-pretty text-lg font-medium text-gray-400 sm:text-xl/8">
+          <p class="mt-3 text-pretty text-lg font-medium text-gray-400 sm:text-xl/8">
             Idle RPG on Sui (testnet)
           </p>
-          <div class="mt-10 flex items-center justify-center gap-x-6">
+          <div class="mt-8 flex items-center justify-center gap-x-6">
             <a
-              href="#"
+              href="/"
               class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
             >
               Mint tuskpet (free)
             </a>
-            <!-- <a href="#" class="text-sm/6 font-semibold text-white">
-              Learn more <span aria-hidden="true">→</span>
-            </a> -->
           </div>
         </div>
       </div>
     </div>
 
     <!-- Tuskpets -->
-    <div class="flex justify-center pb-16">
-      <Carousel.Root class="w-full max-w-md">
-        <Carousel.Content>
-          <Carousel.Item class="">
-            <Card.Root>
-              <Card.Content class="flex aspect-square items-center justify-center p-6">
-                <span class="text-2xl font-semibold">{1}</span>
-              </Card.Content>
-            </Card.Root>
-          </Carousel.Item>
-          <Carousel.Item class="">
-            <Card.Root>
-              <Card.Content class="flex aspect-square items-center justify-center p-6">
-                <span class="text-2xl font-semibold">{2}</span>
-              </Card.Content>
-            </Card.Root>
-          </Carousel.Item>
-          <Carousel.Item class="">
-            <Card.Root>
-              <Card.Content class="flex aspect-square items-center justify-center p-6">
-                <span class="text-2xl font-semibold">{3}</span>
-              </Card.Content>
-            </Card.Root>
-          </Carousel.Item>
-          <Carousel.Item class="">
-            <Card.Root>
-              <Card.Content class="flex aspect-square items-center justify-center p-6">
-                <span class="text-2xl font-semibold">{4}</span>
-              </Card.Content>
-            </Card.Root>
-          </Carousel.Item>
-          <Carousel.Item class="">
-            <Card.Root>
-              <Card.Content class="flex aspect-square items-center justify-center p-6">
-                <span class="text-2xl font-semibold">{5}</span>
-              </Card.Content>
-            </Card.Root>
-          </Carousel.Item>
-        </Carousel.Content>
+    {#if hasOwnedPets}
+      <div class="flex justify-center pb-16">
+        <Carousel.Root class="w-full max-w-md">
+          <Carousel.Content>
+            {#each ownedPets as pet}
+              <Carousel.Item class="">
+                <Card.Root>
+                  <Card.Content
+                    class="flex aspect-square items-center justify-center p-6"
+                  >
+                    <span class="text-xl font-semibold">{pet}</span>
+                  </Card.Content>
+                </Card.Root>
+              </Carousel.Item>
+            {/each}
+          </Carousel.Content>
 
-        <Carousel.Previous />
-        <Carousel.Next />
-      </Carousel.Root>
-    </div>
+          <Carousel.Previous />
+          <Carousel.Next />
+
+          <div class="mt-2 flex justify-center gap-2">
+            <Button>Play</Button>
+            <Button>View on Walrus</Button>
+            <Button variant="destructive">Delete</Button>
+          </div>
+        </Carousel.Root>
+      </div>
+    {/if}
   </div>
 </div>

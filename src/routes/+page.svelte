@@ -4,6 +4,7 @@
     testnetWalletAdapter as walletAdapter
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
   import { untrack } from 'svelte';
+  import { fade } from 'svelte/transition';
   import { SquareArrowOutUpRight } from 'lucide-svelte';
   import { toast } from 'svelte-sonner';
 
@@ -144,12 +145,13 @@
           Idle RPG on Sui (testnet)
         </p>
         <div class="mt-8 flex items-center justify-center gap-x-6">
-          <Button onclick={handleMintTuskpet}>Mint tuskpet (free)</Button>
-          <!-- <a
-            href="/"
-            class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
-          >
-          </a> -->
+          {#if walletAdapter.isConnected}
+            <div transition:fade>
+              <Button onclick={handleMintTuskpet}>Mint tuskpet (free)</Button>
+            </div>
+          {:else}
+            <Button disabled variant="secondary">Mint tuskpet (free)</Button>
+          {/if}
         </div>
       </div>
     </div>
@@ -157,7 +159,7 @@
 
   <!-- Tuskpets -->
   {#if hasOwnedPets}
-    <div class="flex justify-center pb-16">
+    <div transition:fade class="flex justify-center pb-16">
       <Carousel.Root class="w-full max-w-md">
         <Carousel.Content>
           {#each ownedPets as pet}

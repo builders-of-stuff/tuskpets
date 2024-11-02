@@ -5,10 +5,13 @@
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
   import { untrack } from 'svelte';
   import { SquareArrowOutUpRight } from 'lucide-svelte';
+  import { toast } from 'svelte-sonner';
 
   import * as Carousel from '$lib/components/ui/carousel/index';
   import * as Card from '$lib/components/ui/card/index';
   import { Button } from '$lib/components/ui/button/index';
+  import { Toaster } from '$lib/components/ui/sonner/index';
+
   import TuskPet258 from '$lib/assets/tuskpets-258px.png';
 
   import { PACKAGE_ID } from '$lib/shared/shared.constant';
@@ -35,7 +38,10 @@
       );
     })?.objectId;
 
-    ownedPets = [mintedObjectId, ...ownedPets];
+    if (mintedObjectId) {
+      ownedPets = [mintedObjectId, ...ownedPets];
+      toast.success('Tuskpet minted');
+    }
   };
 
   /**
@@ -51,7 +57,10 @@
       );
     })?.objectId;
 
-    ownedPets = ownedPets.filter((pet) => pet !== deletedObjectId);
+    if (deletedObjectId) {
+      ownedPets = ownedPets.filter((pet) => pet !== deletedObjectId);
+      toast.success('Tuskpet deleted');
+    }
   };
 
   // === Effects ===
@@ -90,6 +99,8 @@
     });
   });
 </script>
+
+<Toaster invert richColors />
 
 <!-- Navbar -->
 <header class="absolute inset-x-0 top-0 z-50">
@@ -176,7 +187,7 @@
 
               <div class="mt-2 flex justify-center gap-2">
                 <Button>Play</Button>
-                <Button>View on Walrus</Button>
+                <!-- <Button>View on Walrus</Button> -->
                 <Button onclick={() => handleDeleteTuskpet(pet)} variant="destructive">
                   Delete
                 </Button>

@@ -4,20 +4,41 @@
     testnetWalletAdapter as walletAdapter
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
   import { untrack } from 'svelte';
+  import { SquareArrowOutUpRight } from 'lucide-svelte';
 
   import * as Carousel from '$lib/components/ui/carousel/index';
   import * as Card from '$lib/components/ui/card/index';
   import { Button } from '$lib/components/ui/button/index';
-
   import TuskPet258 from '$lib/assets/tuskpets-258px.png';
 
-  import '../app.css';
   import { PACKAGE_ID } from '$lib/shared/shared.constant';
+  import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
+  import { dropWalrus } from '$lib/shared/contract-tools';
+
+  import '../app.css';
 
   let hasCheckedOwnedObjects = $state(false);
-
   let ownedPets = $state([] as any);
+
   const hasOwnedPets = $derived(ownedPets?.length > 0);
+
+  /**
+   * Delete tuskpet
+   */
+  const handleDeleteTuskpet = async (objectId: string) => {
+    const response = (await dropWalrus(objectId)) as any;
+
+    const deletedObjectId = response?.objectChanges?.find?.((objectChange) => {
+      return (
+        objectChange?.type === 'deleted' &&
+        objectChange?.objectType === `${PACKAGE_ID}::walrus::Walrus`
+      );
+    })?.objectId;
+
+    ownedPets = ownedPets.filter((pet) => pet !== deletedObjectId);
+  };
+
+  // === Effects ===
 
   $effect(() => {
     console.log('ownedPets: ', $state.snapshot(ownedPets));
@@ -45,11 +66,9 @@
           }
         });
 
-        console.log('ownedObjects: ', ownedObjects);
-
         const walruses = ownedObjects?.data?.map((obj: any) => obj.data.objectId);
-        ownedPets = walruses;
 
+        ownedPets = walruses;
         hasCheckedOwnedObjects = true;
       })();
     });
@@ -98,12 +117,12 @@
           Idle RPG on Sui (testnet)
         </p>
         <div class="mt-8 flex items-center justify-center gap-x-6">
-          <a
+          <Button>Mint tuskpet (free)</Button>
+          <!-- <a
             href="/"
             class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
           >
-            Mint tuskpet (free)
-          </a>
+          </a> -->
         </div>
       </div>
     </div>
@@ -118,23 +137,40 @@
             <Carousel.Item class="">
               <Card.Root>
                 <Card.Content
-                  class="flex aspect-square items-center justify-center p-6"
+                  class="flex aspect-square flex-col items-center justify-center gap-2 p-6"
                 >
-                  <span class="text-xl font-semibold">{pet}</span>
+                  <img src={TuskPet258} alt="Walrus" class="h-24 w-24 object-cover" />
+
+                  <div class="flex flex-row items-center">
+                    <span class="text-xl font-semibold">
+                      {toReadableObjectId(pet)}
+                    </span>
+
+                    <a
+                      href={`${toBlockExplorer(pet)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="ml-2 hover:underline"
+                    >
+                      <SquareArrowOutUpRight size={12} />
+                    </a>
+                  </div>
                 </Card.Content>
               </Card.Root>
+
+              <div class="mt-2 flex justify-center gap-2">
+                <Button>Play</Button>
+                <Button>View on Walrus</Button>
+                <Button onclick={() => handleDeleteTuskpet(pet)} variant="destructive">
+                  Delete
+                </Button>
+              </div>
             </Carousel.Item>
           {/each}
         </Carousel.Content>
 
         <Carousel.Previous />
         <Carousel.Next />
-
-        <div class="mt-2 flex justify-center gap-2">
-          <Button>Play</Button>
-          <Button>View on Walrus</Button>
-          <Button variant="destructive">Delete</Button>
-        </div>
       </Carousel.Root>
     </div>
   {/if}

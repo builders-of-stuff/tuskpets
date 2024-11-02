@@ -13,7 +13,7 @@
 
   import { PACKAGE_ID } from '$lib/shared/shared.constant';
   import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
-  import { dropWalrus } from '$lib/shared/contract-tools';
+  import { dropWalrus, mintWalrus } from '$lib/shared/contract-tools';
 
   import '../app.css';
 
@@ -21,6 +21,22 @@
   let ownedPets = $state([] as any);
 
   const hasOwnedPets = $derived(ownedPets?.length > 0);
+
+  /**
+   * Mint tuskpet
+   */
+  const handleMintTuskpet = async () => {
+    const response = (await mintWalrus()) as any;
+
+    const mintedObjectId = response?.objectChanges?.find?.((objectChange) => {
+      return (
+        objectChange?.type === 'created' &&
+        objectChange?.objectType === `${PACKAGE_ID}::walrus::Walrus`
+      );
+    })?.objectId;
+
+    ownedPets = [mintedObjectId, ...ownedPets];
+  };
 
   /**
    * Delete tuskpet
@@ -117,7 +133,7 @@
           Idle RPG on Sui (testnet)
         </p>
         <div class="mt-8 flex items-center justify-center gap-x-6">
-          <Button>Mint tuskpet (free)</Button>
+          <Button onclick={handleMintTuskpet}>Mint tuskpet (free)</Button>
           <!-- <a
             href="/"
             class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"

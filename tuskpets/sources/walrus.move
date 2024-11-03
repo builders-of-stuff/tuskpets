@@ -123,6 +123,7 @@ public struct WALRUS has drop {}
 public struct Walrus has key, store {
     id: UID,
     b36_address: String,
+    name: Option<String>,
     stats: WalrusStats,
     skills: WalrusSkills,
     current_activity: Option<u64>,
@@ -342,6 +343,7 @@ entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
     let Walrus {
         id,
         b36_address: _,
+        name: _,
         stats,
         skills,
         inventory,
@@ -406,6 +408,7 @@ fun new(ctx: &mut TxContext): Walrus {
     Walrus {
         id,
         b36_address,
+        name: option::none(),
         stats,
         skills,
         inventory,

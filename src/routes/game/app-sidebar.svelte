@@ -38,12 +38,12 @@
 </script>
 
 <Sidebar.Root>
-  <Sidebar.Header class="mt-4 flex items-center justify-center">
+  <Sidebar.Header class="flex items-center justify-center bg-muted pt-4">
     <a href="/game">
       <img src={TuskPet258} class="h-32 w-32 rounded-full" alt="TuskPet" />
     </a>
   </Sidebar.Header>
-  <Sidebar.Content>
+  <Sidebar.Content class="bg-muted">
     <Sidebar.Group>
       <Sidebar.GroupContent>
         <Sidebar.Menu>

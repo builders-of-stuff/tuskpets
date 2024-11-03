@@ -8,12 +8,12 @@
   const items = [
     {
       title: 'Tuskpet',
-      url: '#',
+      url: '/game',
       icon: UserRound
     },
     {
       title: 'Inventory',
-      url: '#',
+      url: '/game/inventory',
       icon: Briefcase
     }
   ];
@@ -21,17 +21,17 @@
   const skills = [
     {
       title: 'Diving',
-      url: '#',
+      url: '/game/diving',
       icon: Fish
     },
     {
       title: 'Mining',
-      url: '#',
+      url: '/game/mining',
       icon: Pickaxe
     },
     {
       title: 'Crafting',
-      url: '#',
+      url: '/game/crafting',
       icon: Hammer
     }
   ];
@@ -39,7 +39,9 @@
 
 <Sidebar.Root>
   <Sidebar.Header class="mt-4 flex items-center justify-center">
-    <img src={TuskPet258} class="h-32 w-32 rounded-full" alt="TuskPet" />
+    <a href="/game">
+      <img src={TuskPet258} class="h-32 w-32 rounded-full" alt="TuskPet" />
+    </a>
   </Sidebar.Header>
   <Sidebar.Content>
     <Sidebar.Group>

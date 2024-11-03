@@ -167,7 +167,7 @@ fun init(otw: WALRUS, ctx: &mut TxContext) {
 
     display.add(
         b"link".to_string(),
-        b"https://{{b36_address}}.walrus.site".to_string(),
+        b"https://{b36_address}.walrus.site".to_string(),
     );
     display.add(
         b"walrus site address".to_string(),

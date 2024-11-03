@@ -13,3 +13,12 @@ export const toBlockExplorer = (objectId: string) => {
 
   return `https://suiscan.xyz/testnet/account/${objectId}`;
 };
+
+export const camelCaseKeys = (object) => {
+  return Object.fromEntries(
+    Object.entries(object).map(([key, value]) => [
+      key.replace(/_([a-z])/g, (_, char) => char.toUpperCase()),
+      value
+    ])
+  );
+};

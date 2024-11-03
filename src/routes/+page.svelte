@@ -7,6 +7,7 @@
   import { fade } from 'svelte/transition';
   import { SquareArrowOutUpRight } from 'lucide-svelte';
   import { toast } from 'svelte-sonner';
+  import Reload from 'svelte-radix/Reload.svelte';
 
   import * as Carousel from '$lib/components/ui/carousel/index';
   import * as Card from '$lib/components/ui/card/index';
@@ -18,11 +19,15 @@
   import { PACKAGE_ID } from '$lib/shared/shared.constant';
   import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
   import { dropWalrus, mintWalrus } from '$lib/shared/contract-tools';
+  import { appState, Tuskpet } from '$lib/shared/state.svelte';
+  import { tuskpetObjectToTuskpet } from '$lib/shared/mappers';
 
   import '../app.css';
 
   let hasCheckedOwnedObjects = $state(false);
   let ownedPets = $state([] as any);
+
+  let isLoading = $state(false);
 
   const hasOwnedPets = $derived(ownedPets?.length > 0);
 
@@ -64,8 +69,33 @@
     }
   };
 
-  // === Effects ===
+  /**
+   * Play tuskpet
+   *
+   * - Fetch tuskpet from RPC
+   * - Sync state
+   * - Navigate to game page
+   */
+  const handlePlay = async (tuskpetId: string) => {
+    isLoading = true;
 
+    const response = await walletAdapter.suiClient.getObject({
+      id: tuskpetId,
+      options: {
+        showContent: true,
+        showDisplay: true,
+        showType: true
+      }
+    });
+
+    if (response) {
+      appState.tuskpet = new Tuskpet(tuskpetObjectToTuskpet(response));
+    }
+
+    isLoading = false;
+  };
+
+  // === Effects ===
   $effect(() => {
     console.log('ownedPets: ', $state.snapshot(ownedPets));
   });
@@ -133,7 +163,7 @@
       class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
     ></div>
   </div>
-  <div class="pb-12 pt-24 sm:pb-16 sm:pt-32">
+  <div class="pb-12 pt-24 sm:pt-32">
     <div class="mx-auto max-w-7xl px-6 lg:px-8">
       <div class="mx-auto max-w-2xl text-center">
         <h1
@@ -188,7 +218,14 @@
               </Card.Root>
 
               <div class="mt-2 flex justify-center gap-2">
-                <Button>Play</Button>
+                {#if isLoading}
+                  <Button disabled>
+                    <Reload class="mr-2 size-4 animate-spin" />
+                    Play
+                  </Button>
+                {:else}
+                  <Button onclick={() => handlePlay(pet)}>Play</Button>
+                {/if}
                 <!-- <Button>View on Walrus</Button> -->
                 <Button onclick={() => handleDeleteTuskpet(pet)} variant="destructive">
                   Delete

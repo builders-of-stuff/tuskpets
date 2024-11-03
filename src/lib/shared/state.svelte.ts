@@ -18,6 +18,6 @@ export class Tuskpet {
   }
 }
 
-export const AppState = $state({
+export const appState = $state({
   tuskpet: new Tuskpet({})
 });

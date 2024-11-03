@@ -1,4 +1,5 @@
 <script lang="ts">
-</script>
+  import { appState } from '$lib/shared/state.svelte';
 
-sup game
+  console.log('appState.walrus.: ', appState.tuskpet.id);
+</script>

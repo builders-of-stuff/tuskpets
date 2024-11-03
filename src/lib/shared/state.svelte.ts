@@ -18,6 +18,13 @@ export class Tuskpet {
   }
 }
 
-export const appState = $state({
-  tuskpet: new Tuskpet({})
-});
+class AppState {
+  tuskpet = $state({} as any);
+  hasTuskpet = $derived(!!this.tuskpet?.id);
+
+  constructor() {
+    this.tuskpet = new Tuskpet({});
+  }
+}
+
+export const appState = new AppState();

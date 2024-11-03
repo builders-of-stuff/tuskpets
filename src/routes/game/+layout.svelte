@@ -1,14 +1,25 @@
 <script lang="ts">
+  import { testnetWalletAdapter as walletAdapter } from '@builders-of-stuff/svelte-sui-wallet-adapter';
+
   import * as Sidebar from '$lib/components/ui/sidebar/index';
   import { IsMobile } from '$lib/hooks/is-mobile.svelte';
+  import { appState } from '$lib/shared/state.svelte';
 
   import AppNavbar from './app-navbar.svelte';
   import AppSidebar from './app-sidebar.svelte';
+
   import '../../app.css';
+  import { goto } from '$app/navigation';
 
   let { children } = $props();
 
   const isMobile = new IsMobile();
+
+  $effect(() => {
+    if (!appState.hasTuskpet || !walletAdapter.isConnected) {
+      goto('/');
+    }
+  });
 </script>
 
 <Sidebar.Provider>

@@ -8,7 +8,7 @@
   import { SquareArrowOutUpRight } from 'lucide-svelte';
   import { toast } from 'svelte-sonner';
   import Reload from 'svelte-radix/Reload.svelte';
-
+  import { goto } from '$app/navigation';
   import * as Carousel from '$lib/components/ui/carousel/index';
   import * as Card from '$lib/components/ui/card/index';
   import { Button } from '$lib/components/ui/button/index';
@@ -90,6 +90,7 @@
 
     if (response) {
       appState.tuskpet = new Tuskpet(tuskpetObjectToTuskpet(response));
+      goto('/game');
     }
 
     isLoading = false;

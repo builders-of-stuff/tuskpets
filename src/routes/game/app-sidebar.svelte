@@ -4,42 +4,50 @@
   import Inbox from 'lucide-svelte/icons/inbox';
   import Search from 'lucide-svelte/icons/search';
   import Settings from 'lucide-svelte/icons/settings';
+  import { Fish, Pickaxe, Briefcase, UserRound, Hammer } from 'lucide-svelte';
+
+  import TuskPet258 from '$lib/assets/tuskpets-258px.png';
   import * as Sidebar from '$lib/components/ui/sidebar';
 
   // Menu items.
   const items = [
     {
-      title: 'Home',
+      title: 'Tuskpet',
       url: '#',
-      icon: House
+      icon: UserRound
     },
     {
-      title: 'Inbox',
+      title: 'Inventory',
       url: '#',
-      icon: Inbox
+      icon: Briefcase
+    }
+  ];
+
+  const skills = [
+    {
+      title: 'Diving',
+      url: '#',
+      icon: Fish
     },
     {
-      title: 'Calendar',
+      title: 'Mining',
       url: '#',
-      icon: Calendar
+      icon: Pickaxe
     },
     {
-      title: 'Search',
+      title: 'Crafting',
       url: '#',
-      icon: Search
-    },
-    {
-      title: 'Settings',
-      url: '#',
-      icon: Settings
+      icon: Hammer
     }
   ];
 </script>
 
 <Sidebar.Root>
+  <Sidebar.Header class="mt-4 flex items-center justify-center">
+    <img src={TuskPet258} class="h-32 w-32 rounded-full" alt="TuskPet" />
+  </Sidebar.Header>
   <Sidebar.Content>
     <Sidebar.Group>
-      <Sidebar.GroupLabel>You</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
         <Sidebar.Menu>
           {#each items as item (item.title)}
@@ -60,13 +68,13 @@
       <Sidebar.GroupLabel>Skills</Sidebar.GroupLabel>
       <Sidebar.GroupContent>
         <Sidebar.Menu>
-          {#each items as item (item.title)}
+          {#each skills as skill (skill.title)}
             <Sidebar.MenuItem>
               <Sidebar.MenuButton>
                 {#snippet child({ props })}
-                  <a href={item.url} {...props}>
-                    <item.icon />
-                    <span>{item.title}</span>
+                  <a href={skill.url} {...props}>
+                    <skill.icon />
+                    <span>{skill.title}</span>
                   </a>
                 {/snippet}
               </Sidebar.MenuButton>

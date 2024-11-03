@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { appState } from '$lib/shared/state.svelte';
   import * as Card from '$lib/components/ui/card/index';
   import FullWalrus from '$lib/assets/full-walrus.png';
 </script>
@@ -17,7 +16,7 @@
           class="absolute left-10 top-0 h-full w-auto object-cover opacity-50"
         />
 
-        <Card.Root>
+        <Card.Root class="bg-primary-foreground">
           <Card.Content class="flex flex-col items-center justify-center gap-2 p-6">
             <div class="flex flex-row items-center">
               <span class="text-xl font-semibold"> Name, levels </span>

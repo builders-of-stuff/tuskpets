@@ -5,7 +5,7 @@
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
   import CaretDown from 'phosphor-svelte/lib/CaretDown';
   import { NavigationMenu } from 'bits-ui';
-  import { onMount } from 'svelte';
+  import { untrack } from 'svelte';
 
   import { cn } from '$lib/utils';
   import { Progress } from '$lib/components/ui/progress/index';
@@ -54,17 +54,24 @@
     content: string;
   };
 
-  let progress = 0;
   let loading = true;
+  let progress = $state(0);
+  const maxProgress = 3; // Maximum value before reset
 
-  $: progressWidth = `${(progress / 2) * 100}%`;
+  const progressWidth = $derived(`${(progress / maxProgress) * 100}%`);
 
-  onMount(() => {
-    const interval = setInterval(() => {
-      progress = (progress + 1) % 3; // Resets after 13
-    }, 1000);
+  $effect(() => {
+    untrack(() => {
+      const interval = setInterval(() => {
+        if (progress >= maxProgress) {
+          progress = 0; // Instant reset
+        } else {
+          progress += 1;
+        }
+      }, 1000);
 
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    });
   });
 </script>
 
@@ -91,23 +98,21 @@
   <NavigationMenu.List
     class="group flex flex-1 list-none items-center justify-center space-x-1"
   >
+    <!-- Progress bar -->
     <div class="relative transition-transform duration-200 hover:scale-[1.02]">
-      <!-- Badge -->
+      <!-- Quantity badge -->
       <div
         class="absolute -right-2 -top-2 z-10 animate-pulse rounded-full bg-gray-700 px-2 py-1 text-xs font-bold text-white"
       >
-        <!-- <div
-        class="absolute -right-2 -top-2 z-10 rounded-full bg-gray-700 px-2 py-1 text-xs font-bold text-white"
-      > -->
         13
       </div>
 
-      <!-- Main Container -->
       <div class="relative overflow-hidden rounded-lg bg-gray-800">
         <!-- Progress Background -->
         <div
-          class="absolute inset-0 bg-gray-700 transition-all duration-1000 ease-linear"
+          class="absolute inset-0 bg-gray-700"
           style:width={progressWidth}
+          style:transition={'width 1000ms linear'}
         ></div>
 
         <!-- Content -->

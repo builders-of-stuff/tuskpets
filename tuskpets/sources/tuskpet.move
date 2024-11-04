@@ -1,4 +1,4 @@
-module tuskpets::walrus;
+module tuskpets::tuskpet;
 
 use std::string::{Self, String};
 use sui::address;
@@ -118,21 +118,21 @@ const LEVEL_49_XP: u64 = 125856;
 const LEVEL_50_XP: u64 = 138440;
 
 // === Structs ===
-public struct WALRUS has drop {}
+public struct TUSKPET has drop {}
 
-public struct Walrus has key, store {
+public struct Tuskpet has key, store {
     id: UID,
     b36_address: String,
     name: Option<String>,
-    stats: WalrusStats,
-    skills: WalrusSkills,
+    stats: TuskpetStats,
+    skills: TuskpetSkills,
     current_activity: Option<u64>,
     activity_start: Option<u64>,
     inventory: ObjectBag,
     foes: Bag,
 }
 
-public struct WalrusStats has store {
+public struct TuskpetStats has store {
     health: u64,
     energy: u64,
 }
@@ -146,7 +146,7 @@ public struct WalrusStats has store {
 // - Display of items and walrus
 // - New item vs update existing item quantity logic
 
-public struct WalrusSkills has store {
+public struct TuskpetSkills has store {
     strength_xp: u64,
     dexterity_xp: u64,
     defence_xp: u64,
@@ -162,9 +162,9 @@ public struct Item has key, store {
     quantity: u64,
 }
 
-fun init(otw: WALRUS, ctx: &mut TxContext) {
+fun init(otw: TUSKPET, ctx: &mut TxContext) {
     let publisher = package::claim(otw, ctx);
-    let mut display = display::new<Walrus>(&publisher, ctx);
+    let mut display = display::new<Tuskpet>(&publisher, ctx);
 
     display.add(
         b"link".to_string(),
@@ -181,13 +181,13 @@ fun init(otw: WALRUS, ctx: &mut TxContext) {
 }
 
 // === Public-Mutative Functions ===
-public fun mint(ctx: &mut TxContext): Walrus {
+public fun mint(ctx: &mut TxContext): Tuskpet {
     let walrus = new(ctx);
 
     walrus
 }
 
-entry fun start_activity(code: u64, walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext) {
+entry fun start_activity(code: u64, walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext) {
     assert!(option::is_none<u64>(&walrus.current_activity), EBusyWalrus);
     assert!(option::is_none<u64>(&walrus.activity_start), EBusyWalrus);
 
@@ -197,7 +197,7 @@ entry fun start_activity(code: u64, walrus: &mut Walrus, clock: &Clock, ctx: &mu
     option::fill<u64>(&mut walrus.activity_start, now);
 }
 
-public fun finish_skill(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext): Item {
+public fun finish_skill(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext): Item {
     assert!(option::is_some<u64>(&walrus.current_activity), EIdleWalrus);
     assert!(option::is_some<u64>(&walrus.activity_start), EIdleWalrus);
 
@@ -318,7 +318,7 @@ public fun finish_skill(walrus: &mut Walrus, clock: &Clock, ctx: &mut TxContext)
     }
 }
 
-public fun item_to_inventory(item: Item, walrus: &mut Walrus, ctx: &mut TxContext) {
+public fun item_to_inventory(item: Item, walrus: &mut Tuskpet, ctx: &mut TxContext) {
     let is_existing_item = object_bag::contains(&walrus.inventory, item.`type`);
 
     if (is_existing_item) {
@@ -339,8 +339,8 @@ public fun item_to_inventory(item: Item, walrus: &mut Walrus, ctx: &mut TxContex
 
 
 // === Admin Functions ===
-entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
-    let Walrus {
+entry fun drop_walrus(walrus: Tuskpet, ctx: &mut TxContext) {
+    let Tuskpet {
         id,
         b36_address: _,
         name: _,
@@ -351,11 +351,11 @@ entry fun drop_walrus(walrus: Walrus, ctx: &mut TxContext) {
         current_activity: _,
         activity_start: _,
     } = walrus;
-    let WalrusStats {
+    let TuskpetStats {
         health: _,
         energy: _,
      } = stats;
-     let WalrusSkills {
+     let TuskpetSkills {
         strength_xp: _,
         dexterity_xp: _,
         defence_xp: _,
@@ -386,14 +386,14 @@ entry fun test_clock(clock: &Clock, ctx: &mut TxContext): u64 {
 }
 
 // === Private Functions ===
-fun new(ctx: &mut TxContext): Walrus {
+fun new(ctx: &mut TxContext): Tuskpet {
     let id = object::new(ctx);
     let b36_address = to_b36(id.uid_to_address());
-    let stats = WalrusStats {
+    let stats = TuskpetStats {
         health: 100,
         energy: 100,
     };
-    let skills = WalrusSkills { 
+    let skills = TuskpetSkills { 
         strength_xp: 0,
         dexterity_xp: 0,
         defence_xp: 0,
@@ -405,7 +405,7 @@ fun new(ctx: &mut TxContext): Walrus {
     let inventory = object_bag::new(ctx);
     let foes = bag::new(ctx);
 
-    Walrus {
+    Tuskpet {
         id,
         b36_address,
         name: option::none(),

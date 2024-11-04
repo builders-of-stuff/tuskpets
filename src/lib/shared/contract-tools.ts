@@ -16,7 +16,7 @@ export const mintWalrus = async () => {
   const tx = new Transaction();
 
   const [walrus] = tx.moveCall({
-    target: `${PACKAGE_ID}::tuskpet::mint`,
+    target: `${PACKAGE_ID}::walrus::mint`,
     arguments: []
   });
 
@@ -43,7 +43,7 @@ export const startActivity = async (code: number, walrusObjectId: string) => {
   const tx = new Transaction();
 
   tx.moveCall({
-    target: `${PACKAGE_ID}::tuskpet::start_activity`,
+    target: `${PACKAGE_ID}::walrus::start_activity`,
     arguments: [
       tx.pure.u64(code),
       tx.object(`${walrusObjectId}`),
@@ -85,7 +85,7 @@ export const finishActivity = async (walrusObjectId: string) => {
   const tx = new Transaction();
 
   const [item] = tx.moveCall({
-    target: `${PACKAGE_ID}::tuskpet::finish_activity`,
+    target: `${PACKAGE_ID}::walrus::finish_activity`,
     arguments: [
       tx.object(`${walrusObjectId}`),
       // clock object
@@ -124,7 +124,7 @@ export const dropWalrus = async (walrusObjectId: string) => {
   const tx = new Transaction();
 
   tx.moveCall({
-    target: `${PACKAGE_ID}::tuskpet::drop_walrus`,
+    target: `${PACKAGE_ID}::walrus::drop_walrus`,
     arguments: [tx.object(`${walrusObjectId}`)]
   });
 
@@ -155,7 +155,7 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::claim_fish`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::claim_fish`,
 //     arguments: [tx.object(`${walrusObjectId}`), tx.pure.u64(rawFishCount)]
 //   });
 
@@ -193,12 +193,12 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::claim_fish`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::claim_fish`,
 //     arguments: [tx.object(`${walrusObjectId}`), tx.pure.u64(walrusRawFishCount)]
 //   });
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::claim_penguin_fish`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::claim_penguin_fish`,
 //     arguments: [
 //       tx.object(`${walrusObjectId}`),
 //       tx.pure.u64(now),
@@ -234,7 +234,7 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::reset_walrus`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::reset_walrus`,
 //     arguments: [tx.object(`${walrusObjectId}`)]
 //   });
 
@@ -268,7 +268,7 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::buy_penguins`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::buy_penguins`,
 //     arguments: [tx.object(`${walrusObjectId}`), tx.pure.u64(penguinQuantity)]
 //   });
 

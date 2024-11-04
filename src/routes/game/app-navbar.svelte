@@ -56,7 +56,7 @@
 
   let loading = true;
   let progress = $state(0);
-  const maxProgress = 3; // Maximum value before reset
+  const maxProgress = 10; // Maximum value before reset
 
   const progressWidth = $derived(`${(progress / maxProgress) * 100}%`);
 

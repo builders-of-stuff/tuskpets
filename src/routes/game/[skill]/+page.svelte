@@ -1,13 +1,21 @@
 <script lang="ts">
   import { Clock7, ChevronRight } from 'lucide-svelte';
 
+  import { page } from '$app/stores';
+
   import { Card } from '$lib/components/ui/card';
   import { Progress } from '$lib/components/ui/progress';
   import { Button } from '$lib/components/ui/button';
   import { Input } from '$lib/components/ui/input/index';
   import * as Dialog from '$lib/components/ui/dialog/index';
   import * as Alert from '$lib/components/ui/alert/index';
+  import { SKILLS_CONFIG } from './skill.constant';
 
+  const skill = $derived($page?.params?.skill);
+
+  /**
+   * Modal stuff
+   */
   interface Resource {
     name: string;
     level: number;
@@ -29,20 +37,18 @@
       ],
       icon: '/path/to/tin-icon.png'
     }
-    // Add other resources similarly
   ];
 
-  // Modal stuff
-  let selectedResource: Resource | null = null;
-  let quantity = 1;
-  let showModal = false;
-  let hasEnoughMaterials = false;
+  let selectedActivity = $state(null as any);
+  let quantity = $state(1);
+  let showModal = $state(false);
+  let hasEnoughMaterials = $state(false);
 
-  function handleResourceClick(resource: Resource) {
-    selectedResource = resource;
+  function handleResourceClick(activity) {
+    selectedActivity = activity;
     showModal = true;
     // Check if player has enough materials
-    hasEnoughMaterials = checkMaterials(resource);
+    hasEnoughMaterials = checkMaterials(activity);
   }
 
   function checkMaterials(resource: Resource) {
@@ -64,57 +70,69 @@
   }
 </script>
 
+{#snippet skillActivities(skill: string)}
+  {@const activitiesConfig = SKILLS_CONFIG.activities[skill]}
+  {@const activities = Object.keys(activitiesConfig)}
+
+  {#each activities as activityKey}
+    {@const activityConfig = SKILLS_CONFIG?.activities?.[skill]?.[activityKey]}
+
+    {@render skillActivity(activityConfig)}
+  {/each}
+{/snippet}
+
+{#snippet skillActivity(activityConfig)}
+  <Card
+    onclick={() => handleResourceClick(activityConfig)}
+    class="bg-gray-800/50 transition-colors hover:bg-gray-800/70"
+  >
+    <div class="flex items-center justify-between p-4">
+      <div class="flex items-center gap-4">
+        <img src={activityConfig.image} alt="" class="h-12 w-12" />
+        <div class="flex flex-col gap-1">
+          <h3 class="font-medium text-white">{activityConfig.name}</h3>
+          <div class="flex gap-2 text-sm text-gray-400">
+            <span class="rounded bg-gray-700 px-2 py-0.5">
+              Lv. {activityConfig.requirements.level}
+            </span>
+            <span class="rounded bg-gray-700 px-2 py-0.5">
+              {activityConfig.baseXp} EXP
+            </span>
+            <span
+              class="flex items-center justify-center gap-1 rounded bg-gray-700 px-2 py-0.5"
+            >
+              <Clock7 class="h-4 w-4" />
+              {activityConfig.baseTime}s
+            </span>
+            <!-- {#each activityConfig.requirements as req}
+              <span class="rounded bg-red-900/50 px-2 py-0.5">
+                {req.amount}x {req.item}
+              </span>
+            {/each} -->
+          </div>
+        </div>
+      </div>
+      <Button variant="ghost" class="text-gray-400">
+        <ChevronRight class="h-6 w-6" />
+      </Button>
+    </div>
+  </Card>
+{/snippet}
+
+{#snippet currentAction()}{/snippet}
+
+{#snippet skillProgress()}{/snippet}
+
 <div class="flex min-h-screen gap-4 bg-gray-900 p-4">
   <!-- Left Panel - Resource List -->
   <div class="flex-1">
     <div class="space-y-2">
-      {#each resources as resource}
-        <Card
-          onclick={() => handleResourceClick(resource)}
-          class="bg-gray-800/50 transition-colors hover:bg-gray-800/70"
-        >
-          <div class="flex items-center justify-between p-4">
-            <div class="flex items-center gap-4">
-              <img src={resource.icon} alt="" class="h-12 w-12" />
-              <div>
-                <h3 class="font-medium text-white">{resource.name}</h3>
-                <div class="flex gap-2 text-sm text-gray-400">
-                  <span class="rounded bg-gray-700 px-2 py-0.5"
-                    >Lv. {resource.level}</span
-                  >
-                  <span class="rounded bg-gray-700 px-2 py-0.5">{resource.exp} EXP</span
-                  >
-                  <span class="flex items-center gap-1">
-                    <Clock7 class="h-4 w-4" />
-                    {resource.time}
-                  </span>
-                  {#each resource.requirements as req}
-                    <span class="rounded bg-red-900/50 px-2 py-0.5">
-                      {req.amount}x {req.item}
-                    </span>
-                  {/each}
-                </div>
-              </div>
-            </div>
-            <Button variant="ghost" class="text-gray-400">
-              <ChevronRight class="h-6 w-6" />
-            </Button>
-          </div>
-        </Card>
-      {/each}
+      {@render skillActivities(skill)}
     </div>
   </div>
 
   <!-- Right Panel - Current Action & Progress -->
   <div class="w-80 space-y-4">
-    <!-- Nearby Section -->
-    <Card class="bg-gray-800/50 p-4">
-      <h2 class="mb-2 text-gray-400">NEARBY</h2>
-      <div class="flex -space-x-2">
-        <!-- Add avatar components here -->
-      </div>
-    </Card>
-
     <!-- Current Action -->
     <Card class="bg-gray-800/50 p-4">
       <div class="mb-4 flex items-center justify-between">
@@ -203,40 +221,25 @@
 <Dialog.Root bind:open={showModal}>
   <Dialog.Content class="border-gray-700 bg-gray-800 text-white sm:max-w-[425px]">
     <Dialog.Header>
-      <Button
-        variant="ghost"
-        class="absolute right-4 top-4 text-gray-400 hover:text-white"
-        onclick={() => (showModal = false)}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24">
-          <path
-            fill="none"
-            stroke="currentColor"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M6 18L18 6M6 6l12 12"
-          />
-        </svg>
-      </Button>
-
       <div class="flex flex-col items-center gap-4">
-        {#if selectedResource}
-          <img src={selectedResource.icon} alt="" class="h-24 w-24" />
-          <Dialog.Title class="text-xl font-medium"
-            >{selectedResource.name}</Dialog.Title
-          >
+        {#if selectedActivity}
+          <img src={selectedActivity.image} alt="" class="h-24 w-24" />
+          <Dialog.Title class="text-xl font-medium">
+            {selectedActivity.name}
+          </Dialog.Title>
 
           <div class="flex gap-2">
-            <span class="rounded bg-gray-700 px-3 py-1"
-              >Lv. {selectedResource.level}</span
-            >
-            <span class="rounded bg-gray-700 px-3 py-1">{selectedResource.time}</span>
+            <span class="rounded bg-gray-700 px-3 py-1">
+              Lv. {selectedActivity.requirements.level}
+            </span>
+            <span class="rounded bg-gray-700 px-3 py-1">
+              {selectedActivity.baseTime} seconds
+            </span>
             <span class="rounded bg-indigo-900/50 px-3 py-1">+1 Speed EXP</span>
           </div>
-          <span class="rounded bg-indigo-900/50 px-3 py-1"
-            >+{selectedResource.exp} Smelting EXP</span
-          >
+          <span class="rounded bg-indigo-900/50 px-3 py-1">
+            +{selectedActivity.baseXp} Smelting EXP
+          </span>
         {/if}
       </div>
     </Dialog.Header>
@@ -245,8 +248,8 @@
       <div>
         <h3 class="mb-3 text-gray-400">REQUIREMENTS</h3>
         <div class="flex gap-2">
-          {#if selectedResource?.requirements}
-            {#each selectedResource.requirements as req}
+          {#if selectedActivity?.requirements}
+            {#each selectedActivity.requirements as req}
               <div class="relative">
                 <img
                   src={`/${req.item.toLowerCase()}.png`}

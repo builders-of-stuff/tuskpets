@@ -3,9 +3,12 @@
     ConnectButton,
     testnetWalletAdapter as walletAdapter
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
-  import { NavigationMenu } from 'bits-ui';
   import CaretDown from 'phosphor-svelte/lib/CaretDown';
+  import { NavigationMenu } from 'bits-ui';
+  import { onMount } from 'svelte';
+
   import { cn } from '$lib/utils';
+  import { Progress } from '$lib/components/ui/progress/index';
 
   const components: { title: string; href: string; description: string }[] = [
     {
@@ -50,6 +53,19 @@
     href: string;
     content: string;
   };
+
+  let progress = 0;
+  let loading = true;
+
+  $: progressWidth = `${(progress / 2) * 100}%`;
+
+  onMount(() => {
+    const interval = setInterval(() => {
+      progress = (progress + 1) % 3; // Resets after 13
+    }, 1000);
+
+    return () => clearInterval(interval);
+  });
 </script>
 
 {#snippet ListItem({ className, title, content, href }: ListItemProps)}
@@ -75,6 +91,42 @@
   <NavigationMenu.List
     class="group flex flex-1 list-none items-center justify-center space-x-1"
   >
+    <div class="relative transition-transform duration-200 hover:scale-[1.02]">
+      <!-- Badge -->
+      <div
+        class="absolute -right-2 -top-2 z-10 animate-pulse rounded-full bg-gray-700 px-2 py-1 text-xs font-bold text-white"
+      >
+        <!-- <div
+        class="absolute -right-2 -top-2 z-10 rounded-full bg-gray-700 px-2 py-1 text-xs font-bold text-white"
+      > -->
+        13
+      </div>
+
+      <!-- Main Container -->
+      <div class="relative overflow-hidden rounded-lg bg-gray-800">
+        <!-- Progress Background -->
+        <div
+          class="absolute inset-0 bg-gray-700 transition-all duration-1000 ease-linear"
+          style:width={progressWidth}
+        ></div>
+
+        <!-- Content -->
+        <div class="relative flex items-center gap-2 p-2">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-700">
+            <img src="/steel-bar-icon.png" alt="Steel Bar" class="h-6 w-6" />
+          </div>
+
+          <span class="font-medium text-white">Steel Bar</span>
+
+          {#if loading}
+            <div
+              class="ml-1 h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"
+            ></div>
+          {/if}
+        </div>
+      </div>
+    </div>
+
     <NavigationMenu.Item>
       <NavigationMenu.Trigger
         class="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-muted/50 data-[state=open]:bg-muted/50"

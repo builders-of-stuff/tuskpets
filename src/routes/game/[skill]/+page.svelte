@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Clock7, ChevronRight } from 'lucide-svelte';
+  import { Clock7, ChevronRight, RefreshCcw, X } from 'lucide-svelte';
+  import { untrack } from 'svelte';
 
   import { page } from '$app/stores';
 
@@ -13,6 +14,68 @@
   import { SKILLS_CONFIG } from './skill.constant';
 
   const skill = $derived($page?.params?.skill);
+
+  /**
+   * Current action stuff
+   */
+  // State variables
+  let progress = $state(0);
+  let timeRemaining = $state(1800); // 30 minutes in seconds
+  const maxProgress = 10; // Seconds for each item
+  let itemCount = $state(137);
+
+  // Derived values
+  const progressPercentage = $derived((progress / maxProgress) * 100);
+  const formattedTimeRemaining = $derived(formatTime(timeRemaining));
+  const nextItemTime = $derived(formatTime(maxProgress - progress));
+
+  // Format time helper function
+  function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  }
+
+  // Progress effect
+  $effect(() => {
+    untrack(() => {
+      const interval = setInterval(() => {
+        if (progress >= maxProgress) {
+          progress = 0;
+          itemCount += 1;
+        } else {
+          progress += 1;
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    });
+  });
+
+  // Timer effect
+  $effect(() => {
+    untrack(() => {
+      const interval = setInterval(() => {
+        if (timeRemaining > 0) {
+          timeRemaining -= 1;
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    });
+  });
+
+  // Reset function
+  function handleReset() {
+    timeRemaining = 1800;
+    progress = 0;
+    itemCount = 0;
+  }
+
+  // Cancel function
+  function handleCancel() {
+    // Implement your cancel logic here
+  }
 
   /**
    * Modal stuff
@@ -90,42 +153,32 @@
 {/snippet}
 
 {#snippet currentAction(skill: string)}
-  <Card class="bg-gray-800/50 p-4">
+  <Card class="relative bg-gray-800/50 p-4">
     <div class="mb-4 flex items-center justify-between">
-      <div class="flex gap-2">
-        <span class="rounded bg-gray-700 px-2 py-1">28:30</span>
-        <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+      <div class="absolute -top-2 right-2 z-10 rounded">
+        <div class="flex gap-2">
+          <span
+            class="items-center justify-center self-center rounded bg-gray-700 px-2 py-1 text-sm"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-            />
-          </svg>
-        </Button>
-        <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-4 w-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+            {formattedTimeRemaining}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            class="h-8 w-8 bg-gray-700 p-0 text-xs"
+            onclick={handleReset}
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </Button>
+            <RefreshCcw />
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            class="h-8 w-8 bg-gray-700 p-0 text-xs"
+            onclick={handleCancel}
+          >
+            <X />
+          </Button>
+        </div>
       </div>
     </div>
 
@@ -134,10 +187,10 @@
         <img src="/steel-bar-icon.png" alt="" class="h-12 w-12" />
         <div class="flex-1">
           <h3 class="text-white">Steel Bar</h3>
-          <Progress value={75} class="mt-1" />
-          <div class="flex justify-between text-sm text-gray-400">
-            <span>+137</span>
-            <span>Next item in 0:05</span>
+          <Progress value={progressPercentage} class="mt-1" />
+          <div class="mt-2 flex items-center justify-between text-sm text-gray-400">
+            <span class="rounded bg-gray-700 px-2 py-1 text-xs">+{itemCount}</span>
+            <span class="">Next item in {nextItemTime}</span>
           </div>
         </div>
       </div>
@@ -163,7 +216,7 @@
           <span class="text-white">Smelting</span>
         </div>
         <Progress value={72} class="mt-1" />
-        <div class="mt-1 flex items-center justify-between">
+        <div class="mt-2 flex items-center justify-between">
           <span class="text-xs text-gray-400">2,027 EXP Needed</span>
           <span class="text-xs text-gray-400">72%</span>
         </div>

@@ -85,18 +85,5 @@
     <NavigationMenu.Item>
       <ConnectButton {walletAdapter} />
     </NavigationMenu.Item>
-
-    <NavigationMenu.Indicator
-      class="top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden data-[state=visible]:animate-in data-[state=hidden]:animate-out data-[state=hidden]:fade-out data-[state=visible]:fade-in"
-    >
-      <div
-        class="relative top-[60%] size-2 rotate-45 rounded-tl-sm bg-border shadow-md"
-      ></div>
-    </NavigationMenu.Indicator>
   </NavigationMenu.List>
-  <div class="absolute left-0 top-full flex justify-center">
-    <NavigationMenu.Viewport
-      class="origin-top-center relative mt-1.5 h-[var(--bits-navigation-menu-viewport-height)] w-full overflow-hidden rounded-md border bg-background text-popover-foreground shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-90 md:w-[var(--bits-navigation-menu-viewport-width)]"
-    />
-  </div>
 </NavigationMenu.Root>

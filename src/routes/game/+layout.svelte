@@ -24,9 +24,9 @@
 
 <Sidebar.Provider>
   <AppSidebar />
-  <main class="w-full">
+  <main class="w-full bg-gray-900">
     <div
-      class={`mx-3 my-2 flex flex-wrap items-center ${isMobile.current ? `justify-between` : 'justify-end'}`}
+      class={`flex flex-wrap items-center bg-gray-900 px-3 py-2 ${isMobile.current ? `justify-between` : 'justify-end'}`}
     >
       {#if isMobile.current}
         <Sidebar.Trigger />

@@ -1,6 +1,12 @@
 import SoftshellClam from '$lib/assets/softshell-clam.png';
 import ArcticSurfclam from '$lib/assets/arctic-surfclam.png';
 import GreenlandCockle from '$lib/assets/greenland-cockle.png';
+import Snow from '$lib/assets/snow.png';
+import Ice from '$lib/assets/ice.png';
+import BlueIce from '$lib/assets/blue-ice.png';
+import Snowman from '$lib/assets/snowman.png';
+import IceHelmet from '$lib/assets/ice-helmet.png';
+import TuskBlades from '$lib/assets/tuskblades.png';
 
 export const SKILLS_CONFIG = {
   activities: {
@@ -41,7 +47,7 @@ export const SKILLS_CONFIG = {
         },
         baseTime: 10,
         baseXp: 4,
-        image: GreenlandCockle
+        image: Snow
       },
       ice: {
         name: 'Ice',
@@ -50,7 +56,7 @@ export const SKILLS_CONFIG = {
         },
         baseTime: 20,
         baseXp: 12,
-        image: GreenlandCockle
+        image: Ice
       },
       blueIce: {
         name: 'Blue ice',
@@ -59,18 +65,18 @@ export const SKILLS_CONFIG = {
         },
         baseTime: 30,
         baseXp: 32,
-        image: GreenlandCockle
+        image: BlueIce
       }
     },
     crafting: {
-      snowMittens: {
-        name: 'Snow mittens',
+      snowman: {
+        name: 'Snowman',
         requirements: {
           level: 1
         },
         baseTime: 10,
         baseXp: 10,
-        image: GreenlandCockle
+        image: Snowman
       },
       iceHelmet: {
         name: 'Ice helmet',
@@ -79,7 +85,7 @@ export const SKILLS_CONFIG = {
         },
         baseTime: 20,
         baseXp: 100,
-        image: GreenlandCockle
+        image: IceHelmet
       },
       tuskBlades: {
         name: 'Tusk blades',
@@ -88,7 +94,7 @@ export const SKILLS_CONFIG = {
         },
         baseTime: 30,
         baseXp: 1000,
-        image: GreenlandCockle
+        image: TuskBlades
       }
     }
   }

@@ -25,7 +25,7 @@ const GREENLAND_COCKLE: vector<u8> = b"greenland_cockle";
 const COMPACT_SNOW: vector<u8> = b"compact_snow";
 const ICE: vector<u8> = b"ice";
 const BLUE_ICE: vector<u8> = b"blue_ice";
-const SNOW_MITTENS: vector<u8> = b"snow_mittens";
+const SNOWMAN: vector<u8> = b"snowman";
 const ICE_HELMET: vector<u8> = b"ice_helmet";
 const TUSK_BLADES: vector<u8> = b"tusk_blades";
 
@@ -54,9 +54,9 @@ const MINING_BLUE_ICE: u64 = 203;
 const MINING_BLUE_ICE_TIME: u64 = 30;
 const MINING_BLUE_ICE_XP: u64 = 32;
 
-const CRAFTING_SNOW_MITTENS: u64 = 301;
-const CRAFTING_SNOW_MITTENS_TIME: u64 = 10;
-const CRAFTING_SNOW_MITTENS_XP: u64 = 10;
+const CRAFTING_SNOWMAN: u64 = 301;
+const CRAFTING_SNOWMAN_TIME: u64 = 10;
+const CRAFTING_SNOWMAN_XP: u64 = 10;
 
 const CRAFTING_ICE_HELMET: u64 = 302;
 const CRAFTING_ICE_HELMET_TIME: u64 = 20;
@@ -279,14 +279,14 @@ public fun finish_skill(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext
             `type`: string::utf8(BLUE_ICE),
             quantity: intervals,
         }
-    } else if (code == CRAFTING_SNOW_MITTENS) {
-        let intervals = elapsed_s / CRAFTING_SNOW_MITTENS_TIME;
-        let xp = intervals * CRAFTING_SNOW_MITTENS_XP;
+    } else if (code == CRAFTING_SNOWMAN) {
+        let intervals = elapsed_s / CRAFTING_SNOWMAN_TIME;
+        let xp = intervals * CRAFTING_SNOWMAN_XP;
         walrus.skills.crafting_xp = walrus.skills.crafting_xp + xp;
 
         return Item {
             id: object::new(ctx),
-            `type`: string::utf8(SNOW_MITTENS),
+            `type`: string::utf8(SNOWMAN),
             quantity: intervals,
         }
     } else if (code == CRAFTING_ICE_HELMET) {

@@ -172,7 +172,7 @@
   </Card>
 {/snippet}
 
-<div class="flex min-h-screen gap-4 bg-gray-900 p-4">
+<div class="flex min-h-screen flex-col gap-4 bg-gray-900 p-4 lg:flex-row">
   <!-- Left Panel -->
   <div class="flex-1">
     <div class="space-y-2">
@@ -181,7 +181,7 @@
   </div>
 
   <!-- Right Panel -->
-  <div class="w-80 space-y-4">
+  <div class="space-y-4 lg:w-80">
     <div class="relative flex items-center">
       <div class="flex-grow border-t border-gray-700"></div>
       <span class="mx-4 flex-shrink text-xs text-gray-400">CURRENT ACTION</span>

@@ -96,9 +96,9 @@
 </script>
 
 <div class="container mx-auto p-4">
-  <div class="flex gap-4">
+  <div class="flex flex-col gap-4 lg:flex-row">
     <!-- Inventory Grid (2/3) -->
-    <div class="w-2/3">
+    <div class="lg:w-2/3">
       <h2 class="mb-4 text-2xl font-bold">Inventory</h2>
       <div class="grid grid-cols-7 gap-1">
         {#each inventoryItems as item}
@@ -128,7 +128,7 @@
     </div>
 
     <!-- Item Details (1/3) -->
-    <div class="w-1/3">
+    <div class="lg:w-1/3">
       <Card class="h-full">
         <div class="p-6">
           {#if selectedItem}

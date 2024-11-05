@@ -186,7 +186,12 @@
       <div class="flex items-center gap-3">
         <img src="/steel-bar-icon.png" alt="" class="h-12 w-12" />
         <div class="flex-1">
-          <h3 class="text-white">Steel Bar</h3>
+          <div class="flex items-center gap-2">
+            <div
+              class="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-white"
+            ></div>
+            <h3 class="text-white">Steel Bar</h3>
+          </div>
           <Progress value={progressPercentage} class="mt-1" />
           <div class="mt-2 flex items-center justify-between text-sm text-gray-400">
             <span class="rounded bg-gray-700 px-2 py-1 text-xs">+{itemCount}</span>

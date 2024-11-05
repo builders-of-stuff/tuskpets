@@ -9,6 +9,7 @@
   import { Input } from '$lib/components/ui/input/index';
   import * as Dialog from '$lib/components/ui/dialog/index';
   import * as Alert from '$lib/components/ui/alert/index';
+
   import { SKILLS_CONFIG } from './skill.constant';
 
   const skill = $derived($page?.params?.skill);
@@ -16,29 +17,6 @@
   /**
    * Modal stuff
    */
-  interface Resource {
-    name: string;
-    level: number;
-    exp: number;
-    time: string;
-    requirements: Array<{ item: string; amount: number }>;
-    icon: string;
-  }
-
-  const resources: Resource[] = [
-    {
-      name: 'Tin Bar',
-      level: 1,
-      exp: 3,
-      time: '12s',
-      requirements: [
-        { item: 'Tin Ore', amount: 1 },
-        { item: 'Coal Ore', amount: 1 }
-      ],
-      icon: '/path/to/tin-icon.png'
-    }
-  ];
-
   let selectedActivity = $state(null as any);
   let quantity = $state(1);
   let showModal = $state(false);
@@ -51,17 +29,9 @@
     hasEnoughMaterials = checkMaterials(activity);
   }
 
-  function checkMaterials(resource: Resource) {
+  function checkMaterials(activity) {
     // Implement your logic to check if player has required materials
     return false; // For this example
-  }
-
-  function incrementQuantity() {
-    quantity++;
-  }
-
-  function decrementQuantity() {
-    if (quantity > 1) quantity--;
   }
 
   function setMaxQuantity() {
@@ -119,105 +89,116 @@
   </Card>
 {/snippet}
 
-{#snippet currentAction()}{/snippet}
+{#snippet currentAction(skill: string)}
+  <Card class="bg-gray-800/50 p-4">
+    <div class="mb-4 flex items-center justify-between">
+      <div class="flex gap-2">
+        <span class="rounded bg-gray-700 px-2 py-1">28:30</span>
+        <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+        </Button>
+        <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </Button>
+      </div>
+    </div>
 
-{#snippet skillProgress()}{/snippet}
+    <div class="space-y-4">
+      <div class="flex items-center gap-3">
+        <img src="/steel-bar-icon.png" alt="" class="h-12 w-12" />
+        <div class="flex-1">
+          <h3 class="text-white">Steel Bar</h3>
+          <Progress value={75} class="mt-1" />
+          <div class="flex justify-between text-sm text-gray-400">
+            <span>+137</span>
+            <span>Next item in 0:05</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Card>
+{/snippet}
+
+{#snippet skillProgress(skill: string)}
+  <Card class="relative bg-gray-800/50 p-4">
+    <span class="absolute -top-2 right-2 z-10 rounded bg-gray-700 px-2 py-1 text-xs">
+      0% Efficiency
+    </span>
+
+    <div class="flex items-center gap-3">
+      <div class="relative">
+        <img src="/smelting-icon.png" alt="" class="h-12 w-12" />
+        <span class="absolute -bottom-1 -right-1 rounded bg-gray-700 px-1.5 text-xs">
+          Lv. 43
+        </span>
+      </div>
+      <div class="flex-1">
+        <div class="flex justify-between text-sm">
+          <span class="text-white">Smelting</span>
+        </div>
+        <Progress value={72} class="mt-1" />
+        <div class="mt-1 flex items-center justify-between">
+          <span class="text-xs text-gray-400">2,027 EXP Needed</span>
+          <span class="text-xs text-gray-400">72%</span>
+        </div>
+      </div>
+    </div>
+  </Card>
+{/snippet}
 
 <div class="flex min-h-screen gap-4 bg-gray-900 p-4">
-  <!-- Left Panel - Resource List -->
+  <!-- Left Panel -->
   <div class="flex-1">
     <div class="space-y-2">
       {@render skillActivities(skill)}
     </div>
   </div>
 
-  <!-- Right Panel - Current Action & Progress -->
+  <!-- Right Panel -->
   <div class="w-80 space-y-4">
-    <!-- Current Action -->
-    <Card class="bg-gray-800/50 p-4">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-gray-400">CURRENT ACTION</h2>
-        <div class="flex gap-2">
-          <span class="rounded bg-gray-700 px-2 py-1">28:30</span>
-          <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-          </Button>
-          <Button variant="ghost" size="sm" class="h-8 w-8 p-0">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </Button>
-        </div>
-      </div>
+    <div class="relative flex items-center">
+      <div class="flex-grow border-t border-gray-700"></div>
+      <span class="mx-4 flex-shrink text-xs text-gray-400">CURRENT ACTION</span>
+      <div class="flex-grow border-t border-gray-700"></div>
+    </div>
+    {@render currentAction(skill)}
 
-      <div class="space-y-4">
-        <div class="flex items-center gap-3">
-          <img src="/steel-bar-icon.png" alt="" class="h-12 w-12" />
-          <div class="flex-1">
-            <h3 class="text-white">Steel Bar</h3>
-            <div class="flex justify-between text-sm text-gray-400">
-              <span>+137</span>
-              <span>Next item in 0:05</span>
-            </div>
-            <Progress value={75} class="mt-1" />
-          </div>
-        </div>
-      </div>
-    </Card>
-
-    <!-- Progress Section -->
-    <Card class="bg-gray-800/50 p-4">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-gray-400">YOUR PROGRESS</h2>
-        <span class="rounded bg-gray-700 px-2 py-1 text-sm">0% Efficiency</span>
-      </div>
-
-      <div class="flex items-center gap-3">
-        <div class="relative">
-          <img src="/smelting-icon.png" alt="" class="h-12 w-12" />
-          <span class="absolute -bottom-1 -right-1 rounded bg-gray-700 px-1.5 text-xs">
-            Lv. 43
-          </span>
-        </div>
-        <div class="flex-1">
-          <div class="flex justify-between text-sm">
-            <span class="text-white">Smelting</span>
-            <span class="text-gray-400">2,027 EXP Needed</span>
-          </div>
-          <Progress value={72} class="mt-1" />
-          <div class="mt-1 flex justify-end">
-            <span class="text-sm text-gray-400">72%</span>
-          </div>
-        </div>
-      </div>
-    </Card>
+    <div class="relative flex items-center">
+      <div class="flex-grow border-t border-gray-700"></div>
+      <span class="mx-4 flex-shrink text-xs text-gray-400">YOUR PROGRESS</span>
+      <div class="flex-grow border-t border-gray-700"></div>
+    </div>
+    {@render skillProgress(skill)}
   </div>
 </div>
 
+<!-- Modal -->
 <Dialog.Root bind:open={showModal}>
   <Dialog.Content class="border-gray-700 bg-gray-800 text-white sm:max-w-[425px]">
     <Dialog.Header>
@@ -314,14 +295,14 @@
           <Button
             variant="secondary"
             class="bg-gray-700 hover:bg-gray-600"
-            onclick={decrementQuantity}
+            onclick={() => quantity > 1 && quantity--}
           >
             -
           </Button>
           <Button
             variant="secondary"
             class="bg-gray-700 hover:bg-gray-600"
-            onclick={incrementQuantity}
+            onclick={() => quantity++}
           >
             +
           </Button>

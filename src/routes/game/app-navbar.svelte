@@ -56,7 +56,7 @@
 
   let loading = true;
   let progress = $state(0);
-  const maxProgress = 10; // Maximum value before reset
+  const maxProgress = 10; // Seconds to reset
 
   const progressWidth = $derived(`${(progress / maxProgress) * 100}%`);
 
@@ -110,7 +110,7 @@
       <div class="relative overflow-hidden rounded-lg bg-gray-800">
         <!-- Progress Background -->
         <div
-          class="absolute inset-0 bg-gray-700"
+          class="absolute inset-0 bg-green-700"
           style:width={progressWidth}
           style:transition={'width 1000ms linear'}
         ></div>
@@ -125,7 +125,7 @@
 
           {#if loading}
             <div
-              class="ml-1 h-4 w-4 animate-spin rounded-full border-2 border-gray-500 border-t-white"
+              class="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-white"
             ></div>
           {/if}
         </div>

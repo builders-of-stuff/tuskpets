@@ -38,23 +38,6 @@
   });
 </script>
 
-{#snippet ListItem({ className, title, content, href }: ListItemProps)}
-  <li>
-    <NavigationMenu.Link
-      class={cn(
-        'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-muted hover:text-accent-foreground focus:bg-muted focus:text-accent-foreground',
-        className
-      )}
-      {href}
-    >
-      <div class="text-sm font-medium leading-none">{title}</div>
-      <p class="line-clamp-2 text-sm leading-snug text-muted-foreground">
-        {content}
-      </p>
-    </NavigationMenu.Link>
-  </li>
-{/snippet}
-
 <NavigationMenu.Root
   class="relative z-10 flex max-w-max flex-1 items-center justify-center"
 >

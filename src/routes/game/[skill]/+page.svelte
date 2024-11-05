@@ -158,14 +158,14 @@
       <div class="absolute -top-2 right-2 z-10 rounded">
         <div class="flex gap-2">
           <span
-            class="items-center justify-center self-center rounded bg-gray-700 px-2 py-1 text-sm"
+            class="items-center justify-center self-center rounded bg-gray-700 px-2 py-1 text-xs"
           >
             {formattedTimeRemaining}
           </span>
           <Button
             variant="ghost"
             size="sm"
-            class="h-8 w-8 bg-gray-700 p-0 text-xs"
+            class="h-6 w-6 bg-gray-700 p-0 text-xs"
             onclick={handleReset}
           >
             <RefreshCcw />
@@ -173,7 +173,7 @@
           <Button
             variant="ghost"
             size="sm"
-            class="h-8 w-8 bg-gray-700 p-0 text-xs"
+            class="h-6 w-6 bg-gray-700 p-0 text-xs"
             onclick={handleCancel}
           >
             <X />

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Fish, Pickaxe, Briefcase, UserRound, Hammer } from 'lucide-svelte';
+  import { Fish, Pickaxe, Briefcase, UserRound, Hammer, Swords } from 'lucide-svelte';
 
   import TuskPet258 from '$lib/assets/tuskpets-258px.png';
   import * as Sidebar from '$lib/components/ui/sidebar';
@@ -33,6 +33,14 @@
       title: 'Crafting',
       url: '/game/crafting',
       icon: Hammer
+    }
+  ];
+
+  const battle = [
+    {
+      title: 'Battle',
+      url: '',
+      icon: Swords
     }
   ];
 </script>
@@ -72,6 +80,24 @@
                   <a href={skill.url} {...props}>
                     <skill.icon />
                     <span>{skill.title}</span>
+                  </a>
+                {/snippet}
+              </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+          {/each}
+        </Sidebar.Menu>
+      </Sidebar.GroupContent>
+
+      <Sidebar.GroupLabel>Battle</Sidebar.GroupLabel>
+      <Sidebar.GroupContent>
+        <Sidebar.Menu>
+          {#each battle as skill (skill.title)}
+            <Sidebar.MenuItem>
+              <Sidebar.MenuButton isActive={false}>
+                {#snippet child({ props })}
+                  <a href={'/game'} {...props}>
+                    <skill.icon class="text-gray-500" />
+                    <span class="text-gray-500">{skill.title}</span>
                   </a>
                 {/snippet}
               </Sidebar.MenuButton>

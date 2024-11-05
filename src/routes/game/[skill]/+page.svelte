@@ -368,9 +368,6 @@
       </div>
 
       <div class="flex gap-2 pt-2">
-        <Button variant="secondary" class="flex-1 bg-gray-700 hover:bg-gray-600">
-          Inspect Item
-        </Button>
         <Button
           variant="default"
           class="flex-1 bg-indigo-600 hover:bg-indigo-700"

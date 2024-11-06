@@ -9,7 +9,7 @@ import IceHelmet from '$lib/assets/ice-helmet.png';
 import TuskBlades from '$lib/assets/tuskblades.png';
 
 export const SKILLS_CONFIG = {
-  maxActivityDurationSeconds: 72000, // 2 hours
+  maxActivityDurationSeconds: 7200, // 2 hours
   activities: {
     diving: {
       101: {

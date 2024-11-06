@@ -49,13 +49,14 @@
     return remainingSeconds > 0 ? remainingSeconds : 0;
   });
 
+  const hasTimeRemaining = $derived.by(() => timeRemaining > 0);
+
   const timeRemainingFormatted = $derived.by(() => {
     const formatted = formatSeconds(timeRemaining);
 
     return formatted;
   });
 
-  // let progress = $state(0);
   const progress = $derived.by(() => {
     const activityDuration = appState.tuskpet?.activityDurationSeconds;
     const baseTime = activeActivity?.baseTime;
@@ -66,9 +67,11 @@
 
     return activityDuration % baseTime;
   });
+
   let itemCount = $derived(
     Math.floor(appState.tuskpet?.activityDurationSeconds / activeActivity?.baseTime)
   );
+
   const maxProgress = $derived(activeActivity?.baseTime);
   const progressPercentage = $derived((progress / maxProgress) * 100);
   const nextItemTime = $derived(formatTime(maxProgress + 1 - progress));

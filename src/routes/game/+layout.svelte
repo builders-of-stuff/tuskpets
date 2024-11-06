@@ -3,6 +3,7 @@
 
   import * as Sidebar from '$lib/components/ui/sidebar/index';
   import { IsMobile } from '$lib/hooks/is-mobile.svelte';
+  import { Toaster } from '$lib/components/ui/sonner/index';
   import { appState } from '$lib/shared/state.svelte';
 
   import AppNavbar from './app-navbar.svelte';
@@ -21,6 +22,8 @@
     }
   });
 </script>
+
+<Toaster invert richColors />
 
 <Sidebar.Provider>
   <AppSidebar />

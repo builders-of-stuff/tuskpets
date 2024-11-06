@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Clock7, ChevronRight, RefreshCcw, X } from 'lucide-svelte';
   import { untrack } from 'svelte';
+  import { toast } from 'svelte-sonner';
 
   import { page } from '$app/stores';
 
@@ -12,6 +13,8 @@
   import * as Alert from '$lib/components/ui/alert/index';
 
   import { SKILLS_CONFIG } from './skill.constant';
+  import { appState } from '$lib/shared/state.svelte';
+  import { startActivity } from '$lib/shared/contract-tools';
 
   const skill = $derived($page?.params?.skill);
 
@@ -83,7 +86,7 @@
   let selectedActivity = $state(null as any);
   let quantity = $state(1);
   let showModal = $state(false);
-  let hasEnoughMaterials = $state(false);
+  let hasEnoughMaterials = $state(true);
 
   function handleResourceClick(activity) {
     selectedActivity = activity;
@@ -94,13 +97,38 @@
 
   function checkMaterials(activity) {
     // Implement your logic to check if player has required materials
-    return false; // For this example
+    return true; // For this example
   }
 
   function setMaxQuantity() {
     // Implement max quantity logic based on available materials
     quantity = 10; // Example value
   }
+
+  const handleStartActivity = async (selectedActivity) => {
+    if (appState.tuskpet.isBusy) {
+      return;
+    }
+
+    const code = selectedActivity.code;
+    const tuskpetId = appState.tuskpet?.id;
+
+    const executedTx = await startActivity(code, tuskpetId);
+
+    if (executedTx) {
+      appState.tuskpet.currentActivity = code;
+      appState.tuskpet.activityStart = code;
+      showModal = false;
+      toast.success('Activity started');
+    } else {
+      toast.error('Activity failed to start');
+    }
+  };
+
+  $effect(() => {
+    console.log('thing: ', appState.tuskpet.activityStart);
+    console.log('thing: ', appState.tuskpet.activityDurationFormatted);
+  });
 </script>
 
 {#snippet skillActivities(skill: string)}
@@ -369,6 +397,7 @@
 
       <div class="flex gap-2 pt-2">
         <Button
+          onclick={() => handleStartActivity(selectedActivity)}
           variant="default"
           class="flex-1 bg-indigo-600 hover:bg-indigo-700"
           disabled={!hasEnoughMaterials}

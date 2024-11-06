@@ -7,9 +7,9 @@
   import { Button } from '$lib/components/ui/button';
 
   import {
-    dropWalrus,
+    dropTuskpet,
     finishActivity,
-    mintWalrus,
+    mintTuskpet,
     startActivity
   } from '$lib/shared/contract-tools';
   import { DIVING_SOFT_SHELL_CLAM, PACKAGE_ID } from '$lib/shared/shared.constant';
@@ -23,8 +23,8 @@
   /**
    * Mint walrus
    */
-  const handleMintWalrus = async () => {
-    const mintResponse = (await mintWalrus()) as any;
+  const handlemintTuskpet = async () => {
+    const mintResponse = (await mintTuskpet()) as any;
 
     const walrusId = mintResponse?.objectChanges?.find?.((obj) => {
       return obj?.objectType === `${PACKAGE_ID}::walrus::Walrus`;
@@ -73,8 +73,8 @@
   /**
    * Drop walrus
    */
-  const handleDropWalrus = async (id) => {
-    const dropResponse = await dropWalrus(id);
+  const handledropTuskpet = async (id) => {
+    const dropResponse = await dropTuskpet(id);
 
     console.log('dropResponse: ', dropResponse);
   };
@@ -82,8 +82,8 @@
 
 <ConnectButton {walletAdapter} />
 
-<Button onclick={handleMintWalrus} variant="outline">Mint walrus</Button>
-<Button onclick={() => handleDropWalrus(walrusId)} variant="outline">
+<Button onclick={handlemintTuskpet} variant="outline">Mint walrus</Button>
+<Button onclick={() => handledropTuskpet(walrusId)} variant="outline">
   Drop walrus
 </Button>
 <Button

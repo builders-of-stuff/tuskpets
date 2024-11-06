@@ -6,9 +6,9 @@ import { PACKAGE_ID } from '$lib/shared/shared.constant';
 const walletAdapter = testnetWalletAdapter;
 
 /**
- * Mint walrus
+ * Mint tuskpet
  */
-export const mintWalrus = async () => {
+export const mintTuskpet = async () => {
   if (!walletAdapter?.currentAccount?.address) {
     return;
   }
@@ -16,7 +16,7 @@ export const mintWalrus = async () => {
   const tx = new Transaction();
 
   const [walrus] = tx.moveCall({
-    target: `${PACKAGE_ID}::walrus::mint`,
+    target: `${PACKAGE_ID}::tuskpet::mint`,
     arguments: []
   });
 
@@ -39,14 +39,14 @@ export const mintWalrus = async () => {
 /**
  * Start activity
  */
-export const startActivity = async (code: number, walrusObjectId: string) => {
+export const startActivity = async (code: number, tuskpetObjectId: string) => {
   const tx = new Transaction();
 
   tx.moveCall({
-    target: `${PACKAGE_ID}::walrus::start_activity`,
+    target: `${PACKAGE_ID}::tuskpet::start_activity`,
     arguments: [
       tx.pure.u64(code),
-      tx.object(`${walrusObjectId}`),
+      tx.object(`${tuskpetObjectId}`),
       // clock object
       tx.object('0x6')
     ]
@@ -85,7 +85,7 @@ export const finishActivity = async (walrusObjectId: string) => {
   const tx = new Transaction();
 
   const [item] = tx.moveCall({
-    target: `${PACKAGE_ID}::walrus::finish_activity`,
+    target: `${PACKAGE_ID}::tuskpet::finish_activity`,
     arguments: [
       tx.object(`${walrusObjectId}`),
       // clock object
@@ -120,11 +120,11 @@ export const finishActivity = async (walrusObjectId: string) => {
 /**
  * Burn walrus
  */
-export const dropWalrus = async (walrusObjectId: string) => {
+export const dropTuskpet = async (walrusObjectId: string) => {
   const tx = new Transaction();
 
   tx.moveCall({
-    target: `${PACKAGE_ID}::walrus::drop_walrus`,
+    target: `${PACKAGE_ID}::tuskpet::drop_walrus`,
     arguments: [tx.object(`${walrusObjectId}`)]
   });
 
@@ -155,7 +155,7 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::claim_fish`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::claim_fish`,
 //     arguments: [tx.object(`${walrusObjectId}`), tx.pure.u64(rawFishCount)]
 //   });
 
@@ -193,12 +193,12 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::claim_fish`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::claim_fish`,
 //     arguments: [tx.object(`${walrusObjectId}`), tx.pure.u64(walrusRawFishCount)]
 //   });
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::claim_penguin_fish`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::claim_penguin_fish`,
 //     arguments: [
 //       tx.object(`${walrusObjectId}`),
 //       tx.pure.u64(now),
@@ -234,7 +234,7 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::reset_walrus`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::reset_walrus`,
 //     arguments: [tx.object(`${walrusObjectId}`)]
 //   });
 
@@ -268,7 +268,7 @@ export const dropWalrus = async (walrusObjectId: string) => {
 //   const tx = new Transaction();
 
 //   tx.moveCall({
-//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::walrus::buy_penguins`,
+//     target: `${getObjectId('WALRUS_GAME_PACKAGE')}::tuskpet::buy_penguins`,
 //     arguments: [tx.object(`${walrusObjectId}`), tx.pure.u64(penguinQuantity)]
 //   });
 

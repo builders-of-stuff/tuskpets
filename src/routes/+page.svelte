@@ -18,7 +18,7 @@
 
   import { PACKAGE_ID } from '$lib/shared/shared.constant';
   import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
-  import { dropWalrus, mintWalrus } from '$lib/shared/contract-tools';
+  import { dropTuskpet, mintTuskpet } from '$lib/shared/contract-tools';
   import { appState, Tuskpet } from '$lib/shared/state.svelte';
   import { tuskpetObjectToTuskpet } from '$lib/shared/mappers';
 
@@ -35,12 +35,12 @@
    * Mint tuskpet
    */
   const handleMintTuskpet = async () => {
-    const response = (await mintWalrus()) as any;
+    const response = (await mintTuskpet()) as any;
 
     const mintedObjectId = response?.objectChanges?.find?.((objectChange) => {
       return (
         objectChange?.type === 'created' &&
-        objectChange?.objectType === `${PACKAGE_ID}::walrus::Walrus`
+        objectChange?.objectType === `${PACKAGE_ID}::tuskpet::Tuskpet`
       );
     })?.objectId;
 
@@ -54,12 +54,12 @@
    * Delete tuskpet
    */
   const handleDeleteTuskpet = async (objectId: string) => {
-    const response = (await dropWalrus(objectId)) as any;
+    const response = (await dropTuskpet(objectId)) as any;
 
     const deletedObjectId = response?.objectChanges?.find?.((objectChange) => {
       return (
         objectChange?.type === 'deleted' &&
-        objectChange?.objectType === `${PACKAGE_ID}::walrus::Walrus`
+        objectChange?.objectType === `${PACKAGE_ID}::tuskpet::Tuskpet`
       );
     })?.objectId;
 
@@ -114,7 +114,7 @@
         const ownedObjects = await walletAdapter.suiClient.getOwnedObjects({
           owner: walletAdapter?.currentAccount?.address as any,
           filter: {
-            StructType: `${PACKAGE_ID}::walrus::Walrus`
+            StructType: `${PACKAGE_ID}::tuskpet::Tuskpet`
           },
           options: {
             showContent: true,
@@ -199,7 +199,9 @@
                 <Card.Content
                   class="flex aspect-square flex-col items-center justify-center gap-2 p-6"
                 >
-                  <img src={TuskPet258} alt="Walrus" class="h-24 w-24 object-cover" />
+                  <button onclick={() => handlePlay(pet)}>
+                    <img src={TuskPet258} alt="Walrus" class="h-24 w-24 object-cover" />
+                  </button>
 
                   <div class="flex flex-row items-center">
                     <span class="text-xl font-semibold">

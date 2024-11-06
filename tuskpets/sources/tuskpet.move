@@ -339,7 +339,7 @@ public fun item_to_inventory(item: Item, walrus: &mut Tuskpet, ctx: &mut TxConte
 
 
 // === Admin Functions ===
-entry fun drop_walrus(walrus: Tuskpet, ctx: &mut TxContext) {
+entry fun drop_tuskpet(walrus: Tuskpet, ctx: &mut TxContext) {
     let Tuskpet {
         id,
         b36_address: _,

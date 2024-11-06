@@ -22,3 +22,22 @@ export const camelCaseKeys = (object) => {
     ])
   );
 };
+
+export const formatSeconds = (seconds: number) => {
+  const differenceInMinutes = seconds / 60;
+  const differenceInHours = seconds / (60 * 60);
+
+  const hours = Math.floor(differenceInHours);
+  const minutes = Math.floor(differenceInMinutes % 60);
+  const _seconds = Math.floor(seconds % 60);
+
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedSeconds = _seconds.toString().padStart(2, '0');
+
+  return seconds > 0
+    ? `${formattedHours}:${formattedMinutes}:${formattedSeconds}`
+        .replace(/^00:00:/, '00:')
+        .replace(/^00:/, '')
+    : '00:00:00';
+};

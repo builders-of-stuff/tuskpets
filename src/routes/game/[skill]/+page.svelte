@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Clock7, ChevronRight, RefreshCcw, X } from 'lucide-svelte';
+  import { Clock7, ChevronRight, Check, X } from 'lucide-svelte';
   import { untrack } from 'svelte';
   import { toast } from 'svelte-sonner';
 
@@ -15,64 +15,69 @@
   import { SKILLS_CONFIG } from './skill.constant';
   import { appState } from '$lib/shared/state.svelte';
   import { startActivity } from '$lib/shared/contract-tools';
+  import { formatSeconds } from '$lib/shared/shared-tools';
 
   const skill = $derived($page?.params?.skill);
 
   /**
-   * Current action stuff
+   * Active skill/current action
    */
-  // State variables
-  let progress = $state(0);
-  let timeRemaining = $state(1800); // 30 minutes in seconds
-  const maxProgress = 10; // Seconds for each item
-  let itemCount = $state(137);
+  const isActiveSkill = $derived.by(() => {
+    const skillCodes = Object.keys(SKILLS_CONFIG.activities[skill]);
+    const currentActivity = appState.tuskpet?.currentActivity;
 
-  // Derived values
+    return !!currentActivity && skillCodes.includes(currentActivity);
+  });
+
+  const activeActivity = $derived.by(() => {
+    if (!isActiveSkill) {
+      return;
+    }
+
+    const activityCode = appState.tuskpet?.currentActivity;
+    const activityConfig = SKILLS_CONFIG.activities[skill][activityCode];
+
+    return activityConfig;
+  });
+
+  const timeRemaining = $derived.by(() => {
+    const maxDurationSeconds = SKILLS_CONFIG.maxActivityDurationSeconds || 7200;
+    const activityDuration = appState.tuskpet.activityDurationSeconds;
+
+    const remainingSeconds = maxDurationSeconds - activityDuration;
+
+    return remainingSeconds > 0 ? remainingSeconds : 0;
+  });
+
+  const timeRemainingFormatted = $derived.by(() => {
+    const formatted = formatSeconds(timeRemaining);
+
+    return formatted;
+  });
+
+  // let progress = $state(0);
+  const progress = $derived.by(() => {
+    const activityDuration = appState.tuskpet?.activityDurationSeconds;
+    const baseTime = activeActivity?.baseTime;
+
+    if (!activityDuration || !baseTime) {
+      return 0;
+    }
+
+    return activityDuration % baseTime;
+  });
+  let itemCount = $derived(
+    Math.floor(appState.tuskpet?.activityDurationSeconds / activeActivity?.baseTime)
+  );
+  const maxProgress = $derived(activeActivity?.baseTime);
   const progressPercentage = $derived((progress / maxProgress) * 100);
-  const formattedTimeRemaining = $derived(formatTime(timeRemaining));
-  const nextItemTime = $derived(formatTime(maxProgress - progress));
+  const nextItemTime = $derived(formatTime(maxProgress + 1 - progress));
 
   // Format time helper function
   function formatTime(seconds) {
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
+    const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  }
-
-  // Progress effect
-  $effect(() => {
-    untrack(() => {
-      const interval = setInterval(() => {
-        if (progress >= maxProgress) {
-          progress = 0;
-          itemCount += 1;
-        } else {
-          progress += 1;
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
-    });
-  });
-
-  // Timer effect
-  $effect(() => {
-    untrack(() => {
-      const interval = setInterval(() => {
-        if (timeRemaining > 0) {
-          timeRemaining -= 1;
-        }
-      }, 1000);
-
-      return () => clearInterval(interval);
-    });
-  });
-
-  // Reset function
-  function handleReset() {
-    timeRemaining = 1800;
-    progress = 0;
-    itemCount = 0;
   }
 
   // Cancel function
@@ -116,28 +121,23 @@
     const executedTx = await startActivity(code, tuskpetId);
 
     if (executedTx) {
+      const now = Date.now();
+
       appState.tuskpet.currentActivity = code;
-      appState.tuskpet.activityStart = code;
+      appState.tuskpet.activityStart = now;
       showModal = false;
       toast.success('Activity started');
     } else {
       toast.error('Activity failed to start');
     }
   };
-
-  $effect(() => {
-    console.log('thing: ', appState.tuskpet.activityStart);
-    console.log('thing: ', appState.tuskpet.activityDurationFormatted);
-  });
 </script>
 
 {#snippet skillActivities(skill: string)}
   {@const activitiesConfig = SKILLS_CONFIG.activities[skill]}
-  {@const activities = Object.keys(activitiesConfig)}
+  {@const activities = Object.values(activitiesConfig)}
 
-  {#each activities as activityKey}
-    {@const activityConfig = SKILLS_CONFIG?.activities?.[skill]?.[activityKey]}
-
+  {#each activities as activityConfig}
     {@render skillActivity(activityConfig)}
   {/each}
 {/snippet}
@@ -180,7 +180,16 @@
   </Card>
 {/snippet}
 
-{#snippet currentAction(skill: string)}
+{#snippet currentAction()}
+  {@const activityName = activeActivity?.name}
+  {@const activityImage = activeActivity?.image}
+
+  <div class="relative flex items-center">
+    <div class="flex-grow border-t border-gray-700"></div>
+    <span class="mx-4 flex-shrink text-xs text-gray-400">CURRENT ACTION</span>
+    <div class="flex-grow border-t border-gray-700"></div>
+  </div>
+
   <Card class="relative bg-gray-800/50 p-4">
     <div class="mb-4 flex items-center justify-between">
       <div class="absolute -top-2 right-2 z-10 rounded">
@@ -188,16 +197,8 @@
           <span
             class="items-center justify-center self-center rounded bg-gray-700 px-2 py-1 text-xs"
           >
-            {formattedTimeRemaining}
+            {timeRemainingFormatted}
           </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            class="h-6 w-6 bg-gray-700 p-0 text-xs"
-            onclick={handleReset}
-          >
-            <RefreshCcw />
-          </Button>
           <Button
             variant="ghost"
             size="sm"
@@ -212,13 +213,13 @@
 
     <div class="space-y-4">
       <div class="flex items-center gap-3">
-        <img src="/steel-bar-icon.png" alt="" class="h-12 w-12" />
+        <img src={activityImage} alt="" class="h-12 w-12" />
         <div class="flex-1">
           <div class="flex items-center gap-2">
             <div
               class="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-white"
             ></div>
-            <h3 class="text-white">Steel Bar</h3>
+            <h3 class="text-white">{activityName}</h3>
           </div>
           <Progress value={progressPercentage} class="mt-1" />
           <div class="mt-2 flex items-center justify-between text-sm text-gray-400">
@@ -232,6 +233,12 @@
 {/snippet}
 
 {#snippet skillProgress(skill: string)}
+  <div class="relative flex items-center">
+    <div class="flex-grow border-t border-gray-700"></div>
+    <span class="mx-4 flex-shrink text-xs text-gray-400">YOUR PROGRESS</span>
+    <div class="flex-grow border-t border-gray-700"></div>
+  </div>
+
   <Card class="relative bg-gray-800/50 p-4">
     <span class="absolute -top-2 right-2 z-10 rounded bg-gray-700 px-2 py-1 text-xs">
       0% Efficiency
@@ -268,18 +275,10 @@
 
   <!-- Right Panel -->
   <div class="space-y-4 lg:w-80">
-    <div class="relative flex items-center">
-      <div class="flex-grow border-t border-gray-700"></div>
-      <span class="mx-4 flex-shrink text-xs text-gray-400">CURRENT ACTION</span>
-      <div class="flex-grow border-t border-gray-700"></div>
-    </div>
-    {@render currentAction(skill)}
+    {#if isActiveSkill}
+      {@render currentAction()}
+    {/if}
 
-    <div class="relative flex items-center">
-      <div class="flex-grow border-t border-gray-700"></div>
-      <span class="mx-4 flex-shrink text-xs text-gray-400">YOUR PROGRESS</span>
-      <div class="flex-grow border-t border-gray-700"></div>
-    </div>
     {@render skillProgress(skill)}
   </div>
 </div>

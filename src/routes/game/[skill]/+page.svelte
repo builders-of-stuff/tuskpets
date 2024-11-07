@@ -51,6 +51,12 @@
 
   const hasTimeRemaining = $derived.by(() => timeRemaining > 0);
 
+  const elapsedActivityDurationSeconds = $derived.by(() => {
+    return hasTimeRemaining
+      ? appState.tuskpet?.activityDurationSeconds
+      : SKILLS_CONFIG.maxActivityDurationSeconds;
+  });
+
   const timeRemainingFormatted = $derived.by(() => {
     const formatted = formatSeconds(timeRemaining);
 
@@ -58,7 +64,7 @@
   });
 
   const progress = $derived.by(() => {
-    const activityDuration = appState.tuskpet?.activityDurationSeconds;
+    const activityDuration = elapsedActivityDurationSeconds;
     const baseTime = activeActivity?.baseTime;
 
     if (!activityDuration || !baseTime) {
@@ -69,7 +75,7 @@
   });
 
   let itemCount = $derived(
-    Math.floor(appState.tuskpet?.activityDurationSeconds / activeActivity?.baseTime)
+    Math.floor(elapsedActivityDurationSeconds / activeActivity?.baseTime)
   );
 
   const maxProgress = $derived(activeActivity?.baseTime);
@@ -208,7 +214,11 @@
             class="h-6 w-6 bg-gray-700 p-0 text-xs"
             onclick={handleCancel}
           >
-            <X />
+            {#if hasTimeRemaining}
+              <X />
+            {:else}
+              <Check />
+            {/if}
           </Button>
         </div>
       </div>
@@ -219,15 +229,19 @@
         <img src={activityImage} alt="" class="h-12 w-12" />
         <div class="flex-1">
           <div class="flex items-center gap-2">
-            <div
-              class="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-white"
-            ></div>
+            {#if hasTimeRemaining}
+              <div
+                class="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-white"
+              ></div>
+            {/if}
             <h3 class="text-white">{activityName}</h3>
           </div>
           <Progress value={progressPercentage} class="mt-1" />
           <div class="mt-2 flex items-center justify-between text-sm text-gray-400">
             <span class="rounded bg-gray-700 px-2 py-1 text-xs">+{itemCount}</span>
-            <span class="">Next item in {nextItemTime}</span>
+            {#if hasTimeRemaining}
+              <span class="">Next item in {nextItemTime}</span>
+            {/if}
           </div>
         </div>
       </div>

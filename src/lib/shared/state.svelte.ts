@@ -11,6 +11,7 @@ export class Tuskpet {
 
   isBusy = $derived(!!this.currentActivity || !!this.activityStart);
 
+  // How long the current activity has been running (ms)
   activityDurationMs = $derived.by(() => {
     if (!this.activityStart) return null;
 
@@ -23,6 +24,7 @@ export class Tuskpet {
     return msDifference;
   });
 
+  // How long the current activity has been running (seconds)
   activityDurationSeconds = $derived.by(() => {
     if (!this.activityDurationMs) return null;
 
@@ -32,6 +34,7 @@ export class Tuskpet {
     return differenceInSeconds;
   });
 
+  // How long the current activity has been running (formatted 00:00:00)
   activityDurationFormatted = $derived.by(() => {
     if (!this.activityDurationMs) return null;
 

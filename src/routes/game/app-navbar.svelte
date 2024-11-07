@@ -3,38 +3,76 @@
     ConnectButton,
     testnetWalletAdapter as walletAdapter
   } from '@builders-of-stuff/svelte-sui-wallet-adapter';
-  import CaretDown from 'phosphor-svelte/lib/CaretDown';
   import { NavigationMenu } from 'bits-ui';
-  import { untrack } from 'svelte';
 
-  import { cn } from '$lib/utils';
-  import { Progress } from '$lib/components/ui/progress/index';
+  import { appState } from '$lib/shared/state.svelte';
+  import { SKILLS_CONFIG } from '$lib/shared/skill.constant';
+  import { goto } from '$app/navigation';
 
-  type ListItemProps = {
-    className?: string;
-    title: string;
-    href: string;
-    content: string;
-  };
+  const activeActivity = $derived.by(() => {
+    const activityCode = appState.tuskpet?.currentActivity;
+    const skill = Object.keys(SKILLS_CONFIG.skills).find((skillKey) => {
+      const skillConfig = SKILLS_CONFIG.skills[skillKey];
+      const skillContainsActivityCode = Object.keys(skillConfig).includes(activityCode);
 
-  let loading = true;
-  let progress = $state(0);
-  const maxProgress = 10; // Seconds to reset
+      return skillContainsActivityCode;
+    }) as any;
 
-  const progressWidth = $derived(`${(progress / maxProgress) * 100}%`);
+    const activityConfig = SKILLS_CONFIG.skills[skill]?.[activityCode];
 
-  $effect(() => {
-    untrack(() => {
-      const interval = setInterval(() => {
-        if (progress >= maxProgress) {
-          progress = 0; // Instant reset
-        } else {
-          progress += 1;
-        }
-      }, 1000);
+    return activityConfig;
+  });
+  const activeSkillName = $derived.by(() => {
+    const activityCode = appState.tuskpet?.currentActivity;
+    const skill = Object.keys(SKILLS_CONFIG.skills).find((skillKey) => {
+      const skillConfig = SKILLS_CONFIG.skills[skillKey];
+      const skillContainsActivityCode = Object.keys(skillConfig).includes(activityCode);
 
-      return () => clearInterval(interval);
-    });
+      return skillContainsActivityCode;
+    }) as any;
+
+    return skill;
+  });
+
+  const activityName = $derived(activeActivity?.name);
+  const activityImage = $derived(activeActivity?.image);
+  const activityLink = $derived(`/game/${activeSkillName}`);
+
+  const timeRemaining = $derived.by(() => {
+    const maxDurationSeconds = SKILLS_CONFIG.maxActivityDurationSeconds || 7200;
+    const activityDuration = appState.tuskpet.activityDurationSeconds;
+
+    const remainingSeconds = maxDurationSeconds - activityDuration;
+
+    return remainingSeconds > 0 ? remainingSeconds : 0;
+  });
+
+  const hasTimeRemaining = $derived.by(() => timeRemaining > 0);
+
+  const elapsedActivityDurationSeconds = $derived.by(() => {
+    return hasTimeRemaining
+      ? appState.tuskpet?.activityDurationSeconds
+      : SKILLS_CONFIG.maxActivityDurationSeconds;
+  });
+
+  const progress = $derived.by(() => {
+    const activityDuration = elapsedActivityDurationSeconds;
+    const baseTime = activeActivity?.baseTime;
+
+    if (!activityDuration || !baseTime) {
+      return 0;
+    }
+
+    return activityDuration % baseTime;
+  });
+
+  let itemCount = $derived(
+    Math.floor(elapsedActivityDurationSeconds / activeActivity?.baseTime)
+  );
+
+  const maxProgress = $derived(activeActivity?.baseTime);
+  const progressWidth = $derived.by(() => {
+    return hasTimeRemaining ? `${(progress / maxProgress) * 100}%` : '100%';
   });
 </script>
 
@@ -44,14 +82,14 @@
   <NavigationMenu.List
     class="group flex flex-1 list-none items-center justify-center  space-x-3"
   >
-    <NavigationMenu.Item>
+    <NavigationMenu.Item onclick={() => goto(activityLink)} class="cursor-pointer">
       <!-- Progress bar -->
       <div class="relative transition-transform duration-200 hover:scale-[1.02]">
         <!-- Quantity badge -->
         <div
           class="absolute -right-2 -top-2 z-10 animate-pulse rounded-full bg-gray-700 px-2 py-1 text-xs font-bold text-white"
         >
-          13
+          {itemCount}
         </div>
 
         <div class="relative overflow-hidden rounded-lg bg-gray-800">
@@ -67,12 +105,12 @@
             <div
               class="flex h-8 w-8 items-center justify-center rounded-lg bg-green-700"
             >
-              <img src="/steel-bar-icon.png" alt="Steel Bar" class="h-6 w-6" />
+              <img src={activityImage} alt="Steel Bar" class="h-6 w-6" />
             </div>
 
-            <span class="font-medium text-white">Steel Bar</span>
+            <span class="font-medium text-white">{activityName}</span>
 
-            {#if loading}
+            {#if hasTimeRemaining}
               <div
                 class="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-white"
               ></div>

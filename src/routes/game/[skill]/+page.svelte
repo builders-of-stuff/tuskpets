@@ -12,7 +12,7 @@
   import * as Dialog from '$lib/components/ui/dialog/index';
   import * as Alert from '$lib/components/ui/alert/index';
 
-  import { SKILLS_CONFIG } from './skill.constant';
+  import { SKILLS_CONFIG } from '$lib/shared/skill.constant';
   import { appState } from '$lib/shared/state.svelte';
   import { startActivity } from '$lib/shared/contract-tools';
   import { formatSeconds } from '$lib/shared/shared-tools';
@@ -79,7 +79,9 @@
   );
 
   const maxProgress = $derived(activeActivity?.baseTime);
-  const progressPercentage = $derived((progress / maxProgress) * 100);
+  const progressPercentage = $derived.by(() => {
+    return hasTimeRemaining ? (progress / maxProgress) * 100 : 100;
+  });
   const nextItemTime = $derived(formatTime(maxProgress + 1 - progress));
 
   // Format time helper function

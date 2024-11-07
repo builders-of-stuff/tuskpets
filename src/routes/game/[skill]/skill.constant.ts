@@ -10,7 +10,7 @@ import TuskBlades from '$lib/assets/tuskblades.png';
 
 export const SKILLS_CONFIG = {
   maxActivityDurationSeconds: 7200, // 2 hours
-  activities: {
+  skills: {
     diving: {
       101: {
         name: 'Soft shell clam',

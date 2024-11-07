@@ -23,7 +23,7 @@
    * Active skill/current action
    */
   const isActiveSkill = $derived.by(() => {
-    const skillCodes = Object.keys(SKILLS_CONFIG.activities[skill]);
+    const skillCodes = Object.keys(SKILLS_CONFIG.skills[skill]);
     const currentActivity = appState.tuskpet?.currentActivity;
 
     return !!currentActivity && skillCodes.includes(currentActivity);
@@ -35,7 +35,7 @@
     }
 
     const activityCode = appState.tuskpet?.currentActivity;
-    const activityConfig = SKILLS_CONFIG.activities[skill][activityCode];
+    const activityConfig = SKILLS_CONFIG.skills[skill][activityCode];
 
     return activityConfig;
   });
@@ -137,7 +137,7 @@
 </script>
 
 {#snippet skillActivities(skill: string)}
-  {@const activitiesConfig = SKILLS_CONFIG.activities[skill]}
+  {@const activitiesConfig = SKILLS_CONFIG.skills[skill]}
   {@const activities = Object.values(activitiesConfig)}
 
   {#each activities as activityConfig}

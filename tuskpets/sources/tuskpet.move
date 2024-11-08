@@ -197,7 +197,7 @@ entry fun start_activity(code: u64, walrus: &mut Tuskpet, clock: &Clock, ctx: &m
     option::fill<u64>(&mut walrus.activity_start, now);
 }
 
-public fun finish_skill(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext): Item {
+public fun finish_activity(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext): Item {
     assert!(option::is_some<u64>(&walrus.current_activity), EIdleWalrus);
     assert!(option::is_some<u64>(&walrus.activity_start), EIdleWalrus);
 
@@ -217,6 +217,7 @@ public fun finish_skill(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext
     assert!(elapsed_s > 0, EActivityFinishTooSoon);
 
     let diving_lvl = xp_to_level(walrus.skills.diving_xp);
+    let mining_lvl = xp_to_level(walrus.skills.mining_xp);
     let crafting_lvl = xp_to_level(walrus.skills.crafting_xp);
 
     if (code == DIVING_SOFT_SHELL_CLAM) {

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Clock7, ChevronRight, Check, X } from 'lucide-svelte';
-  import { untrack } from 'svelte';
   import { toast } from 'svelte-sonner';
 
   import { page } from '$app/stores';
@@ -26,7 +25,7 @@
     const skillCodes = Object.keys(SKILLS_CONFIG.skills[skill]);
     const currentActivity = appState.tuskpet?.currentActivity;
 
-    return !!currentActivity && skillCodes.includes(currentActivity);
+    return !!currentActivity && skillCodes.includes(String(currentActivity));
   });
 
   const activeActivity = $derived.by(() => {
@@ -91,10 +90,10 @@
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
-  // Cancel function
-  function handleCancel() {
-    // Implement your cancel logic here
-  }
+  /**
+   * Claim activity
+   */
+  const handleClaim = async (tuskpetObjectId: string) => {};
 
   /**
    * Modal stuff
@@ -214,12 +213,12 @@
             variant="ghost"
             size="sm"
             class="h-6 w-6 bg-gray-700 p-0 text-xs"
-            onclick={handleCancel}
+            onclick={() => handleClaim(appState.tuskpet?.id)}
           >
             {#if hasTimeRemaining}
               <X />
             {:else}
-              <Check />
+              <Check class="animate-pulse" />
             {/if}
           </Button>
         </div>

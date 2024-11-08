@@ -77,7 +77,7 @@ export const startActivity = async (code: number, tuskpetObjectId: string) => {
 /**
  * Finish activity
  */
-export const finishActivity = async (walrusObjectId: string) => {
+export const finishActivity = async (tuskpetObjectId: string) => {
   if (!walletAdapter?.currentAccount?.address) {
     return;
   }
@@ -87,7 +87,7 @@ export const finishActivity = async (walrusObjectId: string) => {
   const [item] = tx.moveCall({
     target: `${PACKAGE_ID}::tuskpet::finish_activity`,
     arguments: [
-      tx.object(`${walrusObjectId}`),
+      tx.object(`${tuskpetObjectId}`),
       // clock object
       tx.object('0x6')
     ]
@@ -120,12 +120,12 @@ export const finishActivity = async (walrusObjectId: string) => {
 /**
  * Burn walrus
  */
-export const dropTuskpet = async (walrusObjectId: string) => {
+export const dropTuskpet = async (tuskpetObjectId: string) => {
   const tx = new Transaction();
 
   tx.moveCall({
-    target: `${PACKAGE_ID}::tuskpet::drop_walrus`,
-    arguments: [tx.object(`${walrusObjectId}`)]
+    target: `${PACKAGE_ID}::tuskpet::drop_tuskpet`,
+    arguments: [tx.object(`${tuskpetObjectId}`)]
   });
 
   try {

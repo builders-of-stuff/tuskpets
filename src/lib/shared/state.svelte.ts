@@ -5,7 +5,7 @@ export class Tuskpet {
   skills = $state({});
   currentActivity = $state();
   activityStart = $state() as any;
-  inventory = $state({});
+  inventory = $state([]);
 
   currentDate = $state(Date.now());
 

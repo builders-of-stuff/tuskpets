@@ -15,3 +15,16 @@ export const tuskpetObjectToTuskpet = (rpcResponse) => {
 
   return tuskpet;
 };
+
+export const inventoryObjectsToInventory = (dynamicFieldObjects) => {
+  const mapped = dynamicFieldObjects?.map?.((object) => {
+    return {
+      ...object,
+      id: object?.id?.id,
+      quantity: Number(object?.quantity),
+      type: object?.type
+    };
+  });
+
+  return mapped;
+};

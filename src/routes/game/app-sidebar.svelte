@@ -47,7 +47,7 @@
 
 <Sidebar.Root>
   <Sidebar.Header class="flex items-center justify-center bg-muted pt-4">
-    <a href="/game">
+    <a href="/">
       <img src={TuskPet258} class="h-32 w-32 rounded-full" alt="TuskPet" />
     </a>
   </Sidebar.Header>

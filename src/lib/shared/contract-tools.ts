@@ -84,7 +84,7 @@ export const finishActivity = async (tuskpetObjectId: string) => {
 
   const tx = new Transaction();
 
-  const [item] = tx.moveCall({
+  tx.moveCall({
     target: `${PACKAGE_ID}::tuskpet::finish_activity`,
     arguments: [
       tx.object(`${tuskpetObjectId}`),
@@ -92,8 +92,6 @@ export const finishActivity = async (tuskpetObjectId: string) => {
       tx.object('0x6')
     ]
   });
-
-  tx.transferObjects([item], walletAdapter?.currentAccount?.address);
 
   try {
     const { bytes, signature } = await walletAdapter.signTransaction(tx as any, {});

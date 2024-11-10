@@ -11,9 +11,9 @@
   import * as Dialog from '$lib/components/ui/dialog/index';
   import * as Alert from '$lib/components/ui/alert/index';
 
-  import { SKILLS_CONFIG } from '$lib/shared/skill.constant';
+  import { SKILLS_CONFIG } from '$lib/shared/shared.constant';
   import { appState } from '$lib/shared/state.svelte';
-  import { startActivity } from '$lib/shared/contract-tools';
+  import { finishActivity, startActivity } from '$lib/shared/contract-tools';
   import { formatSeconds } from '$lib/shared/shared-tools';
 
   const skill = $derived($page?.params?.skill);
@@ -91,9 +91,27 @@
   }
 
   /**
-   * Claim activity
+   * Finish activity
    */
-  const handleClaim = async (tuskpetObjectId: string) => {};
+  const handleFinishActivity = async (tuskpetObjectId: string) => {
+    // reset current_activity
+    // reset activity_start
+    // set xp
+    // set inventory item
+
+    const txResponse = await finishActivity(tuskpetObjectId);
+
+    console.log('txResponse: ', txResponse);
+
+    if (txResponse) {
+      appState.tuskpet.currentActivity = null;
+      appState.tuskpet.activityStart = null;
+
+      toast.success('Activity finished');
+    } else {
+      toast.error('Activity failed to finish');
+    }
+  };
 
   /**
    * Modal stuff
@@ -213,7 +231,7 @@
             variant="ghost"
             size="sm"
             class="h-6 w-6 bg-gray-700 p-0 text-xs"
-            onclick={() => handleClaim(appState.tuskpet?.id)}
+            onclick={() => handleFinishActivity(appState.tuskpet?.id)}
           >
             {#if hasTimeRemaining}
               <X />

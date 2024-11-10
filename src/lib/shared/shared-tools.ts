@@ -63,7 +63,7 @@ export const toReadableObjectId = (objectId: string) => {
 export const toBlockExplorer = (objectId: string) => {
   // e.g. "0x3ac65090c7fd9582ac9c06ab28fb45a22f0fc87c3d31f159920c3506041b7f9a"
 
-  return `https://suiscan.xyz/testnet/account/${objectId}`;
+  return `https://suiscan.xyz/testnet/object/${objectId}`;
 };
 
 export const camelCaseKeys = (object) => {

@@ -20,7 +20,10 @@
   import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
   import { dropTuskpet, mintTuskpet } from '$lib/shared/contract-tools';
   import { appState, Tuskpet } from '$lib/shared/state.svelte';
-  import { tuskpetObjectToTuskpet } from '$lib/shared/mappers';
+  import {
+    inventoryObjectsToInventory,
+    tuskpetObjectToTuskpet
+  } from '$lib/shared/mappers';
 
   import '../app.css';
 
@@ -79,17 +82,42 @@
   const handlePlay = async (tuskpetId: string) => {
     isLoading = true;
 
-    const response = await walletAdapter.suiClient.getObject({
+    const response = (await walletAdapter.suiClient.getObject({
       id: tuskpetId,
       options: {
         showContent: true,
         showDisplay: true,
         showType: true
       }
-    });
+    })) as any;
+
+    const inventoryId = response?.data?.content?.fields?.inventory?.fields?.id?.id;
+    const inventorySize =
+      Number(response?.data?.content?.fields?.inventory?.fields?.size) || 0;
+    let inventoryItems = [] as any;
+
+    if (inventorySize > 0) {
+      const inventoryDynamicFields = await walletAdapter.suiClient.getDynamicFields({
+        parentId: inventoryId
+      });
+
+      inventoryItems = await Promise.all(
+        inventoryDynamicFields.data.map(async (df) => {
+          const inventoryItem = (await walletAdapter.suiClient.getDynamicFieldObject({
+            parentId: inventoryId,
+            name: df.name
+          })) as any;
+
+          const fields = inventoryItem?.data?.content?.fields;
+
+          return fields;
+        })
+      );
+    }
 
     if (response) {
       appState.tuskpet = new Tuskpet(tuskpetObjectToTuskpet(response));
+      appState.tuskpet.inventory = inventoryObjectsToInventory(inventoryItems);
       goto('/game');
     }
 
@@ -97,10 +125,6 @@
   };
 
   // === Effects ===
-  $effect(() => {
-    console.log('ownedPets: ', $state.snapshot(ownedPets));
-  });
-
   /**
    * Fetch existing walrus upon connect
    */
@@ -111,7 +135,7 @@
 
     untrack(() => {
       (async () => {
-        const ownedObjects = await walletAdapter.suiClient.getOwnedObjects({
+        const ownedObjects = (await walletAdapter.suiClient.getOwnedObjects({
           owner: walletAdapter?.currentAccount?.address as any,
           filter: {
             StructType: `${PACKAGE_ID}::tuskpet::Tuskpet`
@@ -121,7 +145,7 @@
             showDisplay: true,
             showType: true
           }
-        });
+        })) as any;
 
         const walruses = ownedObjects?.data?.map((obj: any) => obj.data.objectId);
 

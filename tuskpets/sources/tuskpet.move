@@ -197,7 +197,7 @@ entry fun start_activity(code: u64, walrus: &mut Tuskpet, clock: &Clock, ctx: &m
     option::fill<u64>(&mut walrus.activity_start, now);
 }
 
-public fun finish_activity(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext): Item {
+public fun finish_activity(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext) {
     assert!(option::is_some<u64>(&walrus.current_activity), EIdleWalrus);
     assert!(option::is_some<u64>(&walrus.activity_start), EIdleWalrus);
 
@@ -224,99 +224,179 @@ public fun finish_activity(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxCont
         let intervals = elapsed_s / DIVING_SOFT_SHELL_CLAM_TIME;
         let xp = intervals * DIVING_SOFT_SHELL_CLAM_XP;
         walrus.skills.diving_xp = walrus.skills.diving_xp + xp;
-        
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(SOFT_SHELL_CLAM),
-            quantity: intervals,
+
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(SOFT_SHELL_CLAM));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(SOFT_SHELL_CLAM));
+            existing_item.quantity = existing_item.quantity + intervals;
+        } else {
+            object_bag::add(inventory, string::utf8(SOFT_SHELL_CLAM), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(SOFT_SHELL_CLAM),
+                quantity: intervals,
+            })
         }
     } else if (code == DIVING_ARCTIC_SURFCLAM) {
         let intervals = elapsed_s / DIVING_ARCTIC_SURFCLAM_TIME;
         let xp = intervals * DIVING_ARCTIC_SURFCLAM_XP;
         walrus.skills.diving_xp = walrus.skills.diving_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(ARCTIC_SURFCLAM),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(ARCTIC_SURFCLAM));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(ARCTIC_SURFCLAM));
+            existing_item.quantity = existing_item.quantity + intervals;
+        } else {
+            object_bag::add(inventory, string::utf8(ARCTIC_SURFCLAM), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(ARCTIC_SURFCLAM),
+                quantity: intervals,
+            })
         }
     } else if (code == DIVING_GREENLAND_COCKLE) {
         let intervals = elapsed_s / DIVING_GREENLAND_COCKLE_TIME;
         let xp = intervals * DIVING_GREENLAND_COCKLE_XP;
         walrus.skills.diving_xp = walrus.skills.diving_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(GREENLAND_COCKLE),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(GREENLAND_COCKLE));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(GREENLAND_COCKLE));
+            existing_item.quantity = existing_item.quantity + intervals;
+
+            
+        } else {
+            object_bag::add(inventory, string::utf8(GREENLAND_COCKLE), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(GREENLAND_COCKLE),
+                quantity: intervals,
+            })
         }
     } else if (code == MINING_COMPACT_SNOW) {
         let intervals = elapsed_s / MINING_COMPACT_SNOW_TIME;
         let xp = intervals * MINING_COMPACT_SNOW_XP;
         walrus.skills.mining_xp = walrus.skills.mining_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(COMPACT_SNOW),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(COMPACT_SNOW));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(COMPACT_SNOW));
+            existing_item.quantity = existing_item.quantity + intervals;
+
+            
+        } else {
+            object_bag::add(inventory, string::utf8(COMPACT_SNOW), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(COMPACT_SNOW),
+                quantity: intervals,
+            })
         }
     } else if (code == MINING_ICE) {
         let intervals = elapsed_s / MINING_ICE_TIME;
         let xp = intervals * MINING_ICE_XP;
         walrus.skills.mining_xp = walrus.skills.mining_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(ICE),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(ICE));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(ICE));
+            existing_item.quantity = existing_item.quantity + intervals;
+
+            
+        } else {
+            object_bag::add(inventory, string::utf8(ICE), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(ICE),
+                quantity: intervals,
+            })
         }
     } else if (code == MINING_BLUE_ICE) {
         let intervals = elapsed_s / MINING_BLUE_ICE_TIME;
         let xp = intervals * MINING_BLUE_ICE_XP;
         walrus.skills.mining_xp = walrus.skills.mining_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(BLUE_ICE),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(BLUE_ICE));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(BLUE_ICE));
+            existing_item.quantity = existing_item.quantity + intervals;
+
+            
+        } else {
+            object_bag::add(inventory, string::utf8(BLUE_ICE), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(BLUE_ICE),
+                quantity: intervals,
+            })
         }
     } else if (code == CRAFTING_SNOWMAN) {
         let intervals = elapsed_s / CRAFTING_SNOWMAN_TIME;
         let xp = intervals * CRAFTING_SNOWMAN_XP;
         walrus.skills.crafting_xp = walrus.skills.crafting_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(SNOWMAN),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(SNOWMAN));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(SNOWMAN));
+            existing_item.quantity = existing_item.quantity + intervals;
+
+            
+        } else {
+            object_bag::add(inventory, string::utf8(SNOWMAN), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(SNOWMAN),
+                quantity: intervals,
+            })
         }
     } else if (code == CRAFTING_ICE_HELMET) {
         let intervals = elapsed_s / CRAFTING_ICE_HELMET_TIME;
         let xp = intervals * CRAFTING_ICE_HELMET_XP;
         walrus.skills.crafting_xp = walrus.skills.crafting_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(ICE_HELMET),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(ICE_HELMET));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(ICE_HELMET));
+            existing_item.quantity = existing_item.quantity + intervals;
+
+            
+        } else {
+            object_bag::add(inventory, string::utf8(ICE_HELMET), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(ICE_HELMET),
+                quantity: intervals,
+            })
         }
     } else if (code == CRAFTING_TUSK_BLADES) {
         let intervals = elapsed_s / CRAFTING_TUSK_BLADES_TIME;
         let xp = intervals * CRAFTING_TUSK_BLADES_XP;
         walrus.skills.crafting_xp = walrus.skills.crafting_xp + xp;
 
-        return Item {
-            id: object::new(ctx),
-            `type`: string::utf8(TUSK_BLADES),
-            quantity: intervals,
+        let inventory = &mut walrus.inventory;
+        let is_existing_item = object_bag::contains(inventory, string::utf8(TUSK_BLADES));
+
+        if (is_existing_item) {
+            let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(TUSK_BLADES));
+            existing_item.quantity = existing_item.quantity + intervals;
+
+            
+        } else {
+            object_bag::add(inventory, string::utf8(TUSK_BLADES), Item {
+                id: object::new(ctx),
+                `type`: string::utf8(TUSK_BLADES),
+                quantity: intervals,
+            })
         }
     };
-
-    Item {
-        id: object::new(ctx),
-        `type`: string::utf8(b"nothing"),
-        quantity: 0,
-    }
 }
 
 public fun item_to_inventory(item: Item, walrus: &mut Tuskpet, ctx: &mut TxContext) {

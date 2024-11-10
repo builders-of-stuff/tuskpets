@@ -1,6 +1,14 @@
 <script lang="ts">
+  import { SquareArrowOutUpRight } from 'lucide-svelte';
+
   import * as Card from '$lib/components/ui/card/index';
   import FullWalrus from '$lib/assets/full-walrus.png';
+  import { appState } from '$lib/shared/state.svelte';
+  import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
+
+  $effect(() => {
+    console.log('thing: ', appState.tuskpet.inventory);
+  });
 </script>
 
 <div class="container mx-auto p-4">
@@ -19,7 +27,17 @@
         <Card.Root class="bg-primary-foreground">
           <Card.Content class="flex flex-col items-center justify-center gap-2 p-6">
             <div class="flex flex-row items-center">
-              <span class="text-xl font-semibold"> Name, levels </span>
+              <span class="text-xl font-semibold">
+                {toReadableObjectId(appState.tuskpet.id)}
+              </span>
+              <a
+                href={`${toBlockExplorer(appState.tuskpet.id)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="ml-2 hover:underline"
+              >
+                <SquareArrowOutUpRight size={12} />
+              </a>
             </div>
           </Card.Content>
         </Card.Root>

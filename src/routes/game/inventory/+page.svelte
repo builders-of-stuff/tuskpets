@@ -1,98 +1,17 @@
 <script lang="ts">
   import { Card } from '$lib/components/ui/card';
   import { Button } from '$lib/components/ui/button';
-  import { Badge } from '$lib/components/ui/badge';
+  import { appState } from '$lib/shared/state.svelte';
 
-  // Sample inventory data
-  const inventoryItems = [
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    },
-    {
-      id: 1,
-      name: 'Steel Sword',
-      type: 'Weapon',
-      rarity: 'Common',
-      description: 'A basic steel sword',
-      image: '/sword.png',
-      quantity: 4
-    }
-  ];
-
-  let selectedItem = null;
+  let selectedItem = $state() as any;
 
   function selectItem(item) {
     selectedItem = item;
   }
+
+  $effect(() => {
+    console.log('appState.tuskpet.inventory: ', appState.tuskpet.inventory);
+  });
 </script>
 
 <div class="container mx-auto p-4">
@@ -101,28 +20,29 @@
     <div class="lg:w-2/3">
       <h2 class="mb-4 text-2xl font-bold">Inventory</h2>
       <div class="grid grid-cols-7 gap-1">
-        {#each inventoryItems as item}
-          <div class="relative cursor-pointer" on:click={() => selectItem(item)}>
+        {#each appState.tuskpet.inventory as item}
+          {@const id = item?.id}
+          {@const image = item?.image}
+          {@const name = item?.name}
+          {@const quantity = item?.quantity}
+
+          <button class="relative cursor-pointer" onclick={() => selectItem(item)}>
             <Card
               class="h-16 w-16 p-1 transition-all hover:ring-2 hover:ring-primary {selectedItem?.id ===
-              item.id
+              id
                 ? 'ring-2 ring-primary'
                 : ''}"
             >
-              <img
-                src={item.image}
-                alt={item.name}
-                class="h-full w-full object-contain"
-              />
+              <img src={image} alt={name} class="h-full w-full object-contain" />
             </Card>
-            {#if item.quantity > 1}
-              <Badge
-                class="absolute -left-2 -top-2 z-10 flex h-[1.25rem] min-w-[1.5rem] items-center justify-center text-xs shadow-md"
+            {#if quantity > 1}
+              <span
+                class="absolute -left-2 -top-2 z-10 rounded bg-gray-700 px-2 py-1 text-xs"
               >
-                {item.quantity}
-              </Badge>
+                {quantity}
+              </span>
             {/if}
-          </div>
+          </button>
         {/each}
       </div>
     </div>
@@ -143,21 +63,19 @@
                 </div>
                 <div>
                   <h2 class="text-xl font-bold">{selectedItem.name}</h2>
-                  <p class="text-sm text-muted-foreground">{selectedItem.type}</p>
+                  <!-- <p class="text-sm text-muted-foreground">{selectedItem.type}</p> -->
                 </div>
               </div>
               <div class="space-y-2">
                 <p class="text-sm text-muted-foreground">
                   Quantity: {selectedItem.quantity}
                 </p>
-                <p class="text-sm text-muted-foreground">
-                  Rarity: {selectedItem.rarity}
-                </p>
+
                 <p class="mt-4 text-sm">{selectedItem.description}</p>
               </div>
               <div class="flex gap-2">
-                <Button size="sm">Use</Button>
-                <Button size="sm" variant="outline">Drop</Button>
+                <Button disabled size="sm">Use</Button>
+                <Button disabled size="sm" variant="outline">Drop</Button>
               </div>
             </div>
           {:else}

@@ -1,12 +1,18 @@
 import { camelCaseKeys } from './shared-tools';
+import { TYPE_CONFIG } from './shared.constant';
 
 const inventoryObjectsToInventory = (dynamicFieldObjects) => {
   const mapped = dynamicFieldObjects?.map?.((object) => {
     return {
       ...object,
       id: object?.id?.id,
+      type: object?.type,
       quantity: Number(object?.quantity),
-      type: object?.type
+
+      // extras
+      name: TYPE_CONFIG[object?.type]?.name,
+      description: TYPE_CONFIG[object?.type]?.description,
+      image: TYPE_CONFIG[object?.type]?.image
     };
   });
 

@@ -58,176 +58,182 @@ export const CRAFTING_TUSK_BLADES = 303;
 export const CRAFTING_TUSK_BLADES_TIME = 30;
 export const CRAFTING_TUSK_BLADES_XP = 1000;
 
-export const ACTIVITY_CONFIG = {
-  // Diving
-  101: {
-    type: ITEM_TYPE.SOFT_SHELL_CLAM,
-    skill: 'diving',
-    baseTime: 10,
-    baseXp: 4
-  },
-  102: {
-    type: ITEM_TYPE.ARCTIC_SURFCLAM,
-    skill: 'diving',
-    baseTime: 20,
-    baseXp: 12
-  },
-  103: {
-    type: ITEM_TYPE.GREENLAND_COCKLE,
-    skill: 'diving',
-    baseTime: 30,
-    baseXp: 32
-  },
-  // Mining
-  201: {
-    type: ITEM_TYPE.COMPACT_SNOW,
-    skill: 'mining',
-    baseTime: 10,
-    baseXp: 4
-  },
-  202: {
-    type: ITEM_TYPE.ICE,
-    skill: 'mining',
-    baseTime: 20,
-    baseXp: 12
-  },
-  203: {
-    type: ITEM_TYPE.BLUE_ICE,
-    skill: 'mining',
-    baseTime: 30,
-    baseXp: 32
-  },
-  // Crafting
-  301: {
-    type: ITEM_TYPE.SNOWMAN,
-    skill: 'crafting',
-    baseTime: 10,
-    baseXp: 10
-  },
-  302: {
-    type: ITEM_TYPE.ICE_HELMET,
-    skill: 'crafting',
-    baseTime: 20,
-    baseXp: 100
-  },
-  303: {
-    type: ITEM_TYPE.TUSK_BLADES,
-    skill: 'crafting',
-    baseTime: 30,
-    baseXp: 1000
-  }
-};
-
 export const SKILLS_CONFIG = {
   maxActivityDurationSeconds: 7200, // 2 hours
   skills: {
     diving: {
       101: {
         name: 'Soft shell clam',
+        type: ITEM_TYPE.SOFT_SHELL_CLAM,
+        image: SoftshellClam,
+        skill: 'diving',
         description: `A humble but hearty mollusk, perfect for a walrus's first diving expedition. Its shell may be thin, but what it lacks in armor it makes up for in sweet, tender meat. A reliable snack that's earned its nickname 'the beginner's blessing.`,
         code: 101,
         requirements: {
           level: 1
         },
         baseTime: 10,
-        baseXp: 4,
-        image: SoftshellClam
+        baseXp: 4
       },
       102: {
         name: 'Arctic surfclam',
+        type: ITEM_TYPE.ARCTIC_SURFCLAM,
+        image: ArcticSurfclam,
+        skill: 'diving',
         description: `This robust beauty is a prized find among the northern seas. Its sturdy shell houses a generous portion of savory flesh that makes even experienced walruses do a happy flipper dance. Some say you can hear the sound of waves when you hold it close - but that might just be your stomach growling.`,
         code: 102,
         requirements: {
           level: 5
         },
         baseTime: 20,
-        baseXp: 12,
-        image: ArcticSurfclam
+        baseXp: 12
       },
       103: {
         name: 'Greenland cockle',
+        type: ITEM_TYPE.GREENLAND_COCKLE,
+        image: GreenlandCockle,
+        skill: 'diving',
         description: `The legendary jewel of the arctic depths! This rare delicacy is the stuff of walrus dreams, with its distinctive heart-shaped shell and impossibly succulent meat. Finding one of these is like striking gold, if gold was delicious and came in its own carrying case. Ancient walrus tales speak of entire colonies celebrating when one is found.`,
         code: 103,
         requirements: {
           level: 25
         },
         baseTime: 30,
-        baseXp: 32,
-        image: GreenlandCockle
+        baseXp: 32
       }
     },
     mining: {
       201: {
         name: 'Compact snow',
+        type: ITEM_TYPE.COMPACT_SNOW,
+        image: Snow,
+        skill: 'mining',
         description: `The foundation of any arctic construction project! This densely packed snow has been naturally compressed by generations of walrus flippers. While common, it's essential for any respectable walrus builder. Some say it's extra satisfying to pack when you're feeling grumpy.`,
         code: 201,
         requirements: {
           level: 1
         },
         baseTime: 10,
-        baseXp: 4,
-        image: Snow
+        baseXp: 4
       },
       202: {
         name: 'Ice',
+        type: ITEM_TYPE.ICE,
+        image: Ice,
+        skill: 'mining',
         description: `Crystal-clear and surprisingly sturdy, this natural arctic treasure is a cut above regular frozen water. Its pristine surface reflects the aurora borealis in spectacular ways, making it a favorite among walrus architects. Just don't lick it - your tongue will stick!`,
         code: 202,
         requirements: {
           level: 5
         },
         baseTime: 20,
-        baseXp: 12,
-        image: Ice
+        baseXp: 12
       },
       203: {
         name: 'Blue ice',
+        type: ITEM_TYPE.BLUE_ICE,
+        image: BlueIce,
+        skill: 'mining',
         description: `The rarest and most mesmerizing form of frozen water known to walrus-kind. Formed under immense pressure over countless winters, this ancient ice holds a mysterious blue glow that some say is powered by arctic magic. A master walrus miner's proudest discovery.`,
         code: 203,
         requirements: {
           level: 25
         },
         baseTime: 30,
-        baseXp: 32,
-        image: BlueIce
+        baseXp: 32
       }
     },
     crafting: {
       301: {
         name: 'Snowman',
+        type: ITEM_TYPE.SNOWMAN,
+        image: Snowman,
+        skill: 'crafting',
         description: `A time-honored walrus tradition: creating a frozen friend! While it might not be the most practical creation, there's something heartwarming about building a cheerful snow companion. Some walruses insist on using a carrot for the nose, though nobody's quite sure where they get them.`,
         code: 301,
         requirements: {
           level: 1
         },
         baseTime: 10,
-        baseXp: 10,
-        image: Snowman
+        baseXp: 10
       },
       302: {
         name: 'Ice helmet',
+        type: ITEM_TYPE.ICE_HELMET,
+        image: IceHelmet,
+        skill: 'crafting',
         description: `A sophisticated piece of protective headgear crafted from carefully shaped ice. Not only does it keep your head cool under pressure, but it also makes you look rather dashing. The ultimate fashion statement for the safety-conscious walrus.`,
         code: 302,
         requirements: {
           level: 5
         },
         baseTime: 20,
-        baseXp: 100,
-        image: IceHelmet
+        baseXp: 100
       },
       303: {
         name: 'Tusk blades',
+        type: ITEM_TYPE.TUSK_BLADES,
+        image: TuskBlades,
+        skill: 'crafting',
         description: `The pinnacle of walrus crafting achievement! These magnificent blade attachments transform ordinary tusks into extraordinary tools. Carefully forged from the finest materials, they're perfect for everything from ice carving to impressing other walruses at social gatherings. A true mark of mastery.`,
         code: 303,
         requirements: {
           level: 10
         },
         baseTime: 30,
-        baseXp: 1000,
-        image: TuskBlades
+        baseXp: 1000
       }
     }
   }
 };
+
+/**
+ * e.g. {
+ *   101: {
+ *     ...stuff
+ *   }
+ * }
+ */
+export const ACTIVITY_CONFIG = Object.entries(SKILLS_CONFIG.skills).reduce(
+  (acc, [skillName, skillItems]) => {
+    Object.entries(skillItems).forEach(([code, item]) => {
+      acc[code] = {
+        type: item.type,
+        image: item.image,
+        skill: skillName,
+        baseTime: item.baseTime,
+        baseXp: item.baseXp
+      };
+    });
+    return acc;
+  },
+  {}
+);
+
+/**
+ * e.g. {
+ *   compact_snow: {
+ *     ...stuff
+ *   }
+ * }
+ */
+export const TYPE_CONFIG = Object.entries(SKILLS_CONFIG.skills).reduce(
+  (acc, [skillName, skillItems]) => {
+    Object.entries(skillItems).forEach(([code, item]) => {
+      acc[item.type] = {
+        name: item.name,
+        description: item.description,
+        code: item.code,
+        skill: skillName,
+        image: item.image,
+        baseTime: item.baseTime,
+        baseXp: item.baseXp
+      };
+    });
+    return acc;
+  },
+  {}
+);
 
 // === XP Thresholds ===
 export const LEVEL_2_XP = 83;

@@ -21,7 +21,7 @@ export class Tuskpet {
 
     return ACTIVITY_CONFIG[this.currentActivity]?.baseTime;
   });
-  curentActivityBaseXp = $derived.by(() => {
+  currentActivityBaseXp = $derived.by(() => {
     if (!this.currentActivity) return null;
 
     return ACTIVITY_CONFIG[this.currentActivity]?.baseXp;

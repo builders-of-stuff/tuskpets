@@ -104,9 +104,10 @@
     const txResponse = (await finishActivity(tuskpetObjectId)) as any;
 
     if (txResponse) {
-      const intervals =
-        elapsedActivityDurationSeconds / appState.tuskpet?.currentActivityBaseXp;
-      const xp = intervals * appState.tuskpet?.currentActivityBaseXp;
+      const intervals = Math.floor(
+        elapsedActivityDurationSeconds / appState.tuskpet?.currentActivityBaseTime
+      );
+      const xp = Math.floor(intervals * appState.tuskpet?.currentActivityBaseXp);
       const skillType = ACTIVITY_CONFIG[appState.tuskpet?.currentActivity]?.skill;
       const itemType = ACTIVITY_CONFIG[appState.tuskpet?.currentActivity]?.type;
 

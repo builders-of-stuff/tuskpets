@@ -14,6 +14,7 @@
   import {
     ACTIVITY_CONFIG,
     PACKAGE_ID,
+    SKILL_IMAGES,
     SKILLS_CONFIG
   } from '$lib/shared/shared.constant';
   import { appState } from '$lib/shared/state.svelte';
@@ -21,6 +22,15 @@
   import { formatSeconds } from '$lib/shared/shared-tools';
 
   const skill = $derived($page?.params?.skill);
+
+  /**
+   * Progress
+   */
+  const skillImage = $derived(SKILL_IMAGES[skill]);
+  const skillNextLvlXpNeeded = $derived(appState.tuskpet[`${skill}NextLvlXpNeeded`]);
+  const skillNextLvlXpProgress = $derived(
+    appState.tuskpet[`${skill}NextLvlXpProgress`]
+  );
 
   /**
    * Active skill/current action
@@ -301,7 +311,7 @@
   </Card>
 {/snippet}
 
-{#snippet skillProgress(skill: string)}
+{#snippet skillProgress()}
   <div class="relative flex items-center">
     <div class="flex-grow border-t border-gray-700"></div>
     <span class="mx-4 flex-shrink text-xs text-gray-400">YOUR PROGRESS</span>
@@ -315,19 +325,21 @@
 
     <div class="flex items-center gap-3">
       <div class="relative">
-        <img src="/smelting-icon.png" alt="" class="h-12 w-12" />
+        <img src={skillImage} alt="" class="h-12 w-12" />
         <span class="absolute -bottom-1 -right-1 rounded bg-gray-700 px-1.5 text-xs">
-          Lv. 43
+          Lv. {appState.tuskpet?.[`${skill}Lvl`]}
         </span>
       </div>
       <div class="flex-1">
         <div class="flex justify-between text-sm">
-          <span class="text-white">Smelting</span>
+          <span class="text-white">
+            {skill?.charAt(0).toUpperCase() + skill?.slice(1).toLowerCase()}
+          </span>
         </div>
-        <Progress value={72} class="mt-1" />
+        <Progress value={skillNextLvlXpProgress} class="mt-1" />
         <div class="mt-2 flex items-center justify-between">
-          <span class="text-xs text-gray-400">2,027 EXP Needed</span>
-          <span class="text-xs text-gray-400">72%</span>
+          <span class="text-xs text-gray-400">{skillNextLvlXpNeeded} EXP Needed</span>
+          <span class="text-xs text-gray-400">{skillNextLvlXpProgress}%</span>
         </div>
       </div>
     </div>
@@ -348,7 +360,7 @@
       {@render currentAction()}
     {/if}
 
-    {@render skillProgress(skill)}
+    {@render skillProgress()}
   </div>
 </div>
 

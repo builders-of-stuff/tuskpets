@@ -7,6 +7,9 @@ import BlueIce from '$lib/assets/blue-ice.png';
 import Snowman from '$lib/assets/snowman.png';
 import IceHelmet from '$lib/assets/ice-helmet.png';
 import TuskBlades from '$lib/assets/tuskblades.png';
+import Diving from '$lib/assets/diving.png';
+import Crafting from '$lib/assets/crafting.png';
+import Mining from '$lib/assets/mining.png';
 
 import { ITEM_TYPE } from './shared.type';
 
@@ -57,6 +60,12 @@ export const CRAFTING_ICE_HELMET_XP = 100;
 export const CRAFTING_TUSK_BLADES = 303;
 export const CRAFTING_TUSK_BLADES_TIME = 30;
 export const CRAFTING_TUSK_BLADES_XP = 1000;
+
+export const SKILL_IMAGES = {
+  diving: Diving,
+  mining: Mining,
+  crafting: Crafting
+};
 
 export const SKILLS_CONFIG = {
   maxActivityDurationSeconds: 7200, // 2 hours
@@ -196,7 +205,7 @@ export const SKILLS_CONFIG = {
  */
 export const ACTIVITY_CONFIG = Object.entries(SKILLS_CONFIG.skills).reduce(
   (acc, [skillName, skillItems]) => {
-    Object.entries(skillItems).forEach(([code, item]) => {
+    Object.entries(skillItems).forEach(([code, item]: any) => {
       acc[code] = {
         type: item.type,
         image: item.image,
@@ -219,7 +228,7 @@ export const ACTIVITY_CONFIG = Object.entries(SKILLS_CONFIG.skills).reduce(
  */
 export const TYPE_CONFIG = Object.entries(SKILLS_CONFIG.skills).reduce(
   (acc, [skillName, skillItems]) => {
-    Object.entries(skillItems).forEach(([code, item]) => {
+    Object.entries(skillItems).forEach(([code, item]: any) => {
       acc[item.type] = {
         name: item.name,
         description: item.description,

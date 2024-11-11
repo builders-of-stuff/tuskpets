@@ -199,3 +199,219 @@ export const xpToLevel = (xp: number) => {
     return 1;
   }
 };
+
+export const xpNeededtoNextLevel = (xp: number) => {
+  const currentLevel = xpToLevel(xp);
+  const nextLevel = currentLevel + 1;
+
+  if (nextLevel === 2) {
+    return LEVEL_2_XP - xp;
+  } else if (nextLevel === 3) {
+    return LEVEL_3_XP - xp;
+  } else if (nextLevel === 4) {
+    return LEVEL_4_XP - xp;
+  } else if (nextLevel === 5) {
+    return LEVEL_5_XP - xp;
+  } else if (nextLevel === 6) {
+    return LEVEL_6_XP - xp;
+  } else if (nextLevel === 7) {
+    return LEVEL_7_XP - xp;
+  } else if (nextLevel === 8) {
+    return LEVEL_8_XP - xp;
+  } else if (nextLevel === 9) {
+    return LEVEL_9_XP - xp;
+  } else if (nextLevel === 10) {
+    return LEVEL_10_XP - xp;
+  } else if (nextLevel === 11) {
+    return LEVEL_11_XP - xp;
+  } else if (nextLevel === 12) {
+    return LEVEL_12_XP - xp;
+  } else if (nextLevel === 13) {
+    return LEVEL_13_XP - xp;
+  } else if (nextLevel === 14) {
+    return LEVEL_14_XP - xp;
+  } else if (nextLevel === 15) {
+    return LEVEL_15_XP - xp;
+  } else if (nextLevel === 16) {
+    return LEVEL_16_XP - xp;
+  } else if (nextLevel === 17) {
+    return LEVEL_17_XP - xp;
+  } else if (nextLevel === 18) {
+    return LEVEL_18_XP - xp;
+  } else if (nextLevel === 19) {
+    return LEVEL_19_XP - xp;
+  } else if (nextLevel === 20) {
+    return LEVEL_20_XP - xp;
+  } else if (nextLevel === 21) {
+    return LEVEL_21_XP - xp;
+  } else if (nextLevel === 22) {
+    return LEVEL_22_XP - xp;
+  } else if (nextLevel === 23) {
+    return LEVEL_23_XP - xp;
+  } else if (nextLevel === 24) {
+    return LEVEL_24_XP - xp;
+  } else if (nextLevel === 25) {
+    return LEVEL_25_XP - xp;
+  } else if (nextLevel === 26) {
+    return LEVEL_26_XP - xp;
+  } else if (nextLevel === 27) {
+    return LEVEL_27_XP - xp;
+  } else if (nextLevel === 28) {
+    return LEVEL_28_XP - xp;
+  } else if (nextLevel === 29) {
+    return LEVEL_29_XP - xp;
+  } else if (nextLevel === 30) {
+    return LEVEL_30_XP - xp;
+  } else if (nextLevel === 31) {
+    return LEVEL_31_XP - xp;
+  } else if (nextLevel === 32) {
+    return LEVEL_32_XP - xp;
+  } else if (nextLevel === 33) {
+    return LEVEL_33_XP - xp;
+  } else if (nextLevel === 34) {
+    return LEVEL_34_XP - xp;
+  } else if (nextLevel === 35) {
+    return LEVEL_35_XP - xp;
+  } else if (nextLevel === 36) {
+    return LEVEL_36_XP - xp;
+  } else if (nextLevel === 37) {
+    return LEVEL_37_XP - xp;
+  } else if (nextLevel === 38) {
+    return LEVEL_38_XP - xp;
+  } else if (nextLevel === 39) {
+    return LEVEL_39_XP - xp;
+  } else if (nextLevel === 40) {
+    return LEVEL_40_XP - xp;
+  } else if (nextLevel === 41) {
+    return LEVEL_41_XP - xp;
+  } else if (nextLevel === 42) {
+    return LEVEL_42_XP - xp;
+  } else if (nextLevel === 43) {
+    return LEVEL_43_XP - xp;
+  } else if (nextLevel === 44) {
+    return LEVEL_44_XP - xp;
+  } else if (nextLevel === 45) {
+    return LEVEL_45_XP - xp;
+  } else if (nextLevel === 46) {
+    return LEVEL_46_XP - xp;
+  } else if (nextLevel === 47) {
+    return LEVEL_47_XP - xp;
+  } else if (nextLevel === 48) {
+    return LEVEL_48_XP - xp;
+  } else if (nextLevel === 49) {
+    return LEVEL_49_XP - xp;
+  } else if (nextLevel === 50) {
+    return LEVEL_50_XP - xp;
+  } else {
+    return 0;
+  }
+};
+
+export const xpProgressPercentage = (xp: number) => {
+  const currentLevel = xpToLevel(xp);
+  const nextLevel = currentLevel + 1;
+  let nextLevelXp;
+  const xpNeeded = xpNeededtoNextLevel(xp);
+
+  if (nextLevel === 2) {
+    nextLevelXp = LEVEL_2_XP;
+  } else if (nextLevel === 3) {
+    nextLevelXp = LEVEL_3_XP;
+  } else if (nextLevel === 4) {
+    nextLevelXp = LEVEL_4_XP;
+  } else if (nextLevel === 5) {
+    nextLevelXp = LEVEL_5_XP;
+  } else if (nextLevel === 6) {
+    nextLevelXp = LEVEL_6_XP;
+  } else if (nextLevel === 7) {
+    nextLevelXp = LEVEL_7_XP;
+  } else if (nextLevel === 8) {
+    nextLevelXp = LEVEL_8_XP;
+  } else if (nextLevel === 9) {
+    nextLevelXp = LEVEL_9_XP;
+  } else if (nextLevel === 10) {
+    nextLevelXp = LEVEL_10_XP;
+  } else if (nextLevel === 11) {
+    nextLevelXp = LEVEL_11_XP;
+  } else if (nextLevel === 12) {
+    nextLevelXp = LEVEL_12_XP;
+  } else if (nextLevel === 13) {
+    nextLevelXp = LEVEL_13_XP;
+  } else if (nextLevel === 14) {
+    nextLevelXp = LEVEL_14_XP;
+  } else if (nextLevel === 15) {
+    nextLevelXp = LEVEL_15_XP;
+  } else if (nextLevel === 16) {
+    nextLevelXp = LEVEL_16_XP;
+  } else if (nextLevel === 17) {
+    nextLevelXp = LEVEL_17_XP;
+  } else if (nextLevel === 18) {
+    nextLevelXp = LEVEL_18_XP;
+  } else if (nextLevel === 19) {
+    nextLevelXp = LEVEL_19_XP;
+  } else if (nextLevel === 20) {
+    nextLevelXp = LEVEL_20_XP;
+  } else if (nextLevel === 21) {
+    nextLevelXp = LEVEL_21_XP;
+  } else if (nextLevel === 22) {
+    nextLevelXp = LEVEL_22_XP;
+  } else if (nextLevel === 23) {
+    nextLevelXp = LEVEL_23_XP;
+  } else if (nextLevel === 24) {
+    nextLevelXp = LEVEL_24_XP;
+  } else if (nextLevel === 25) {
+    nextLevelXp = LEVEL_25_XP;
+  } else if (nextLevel === 26) {
+    nextLevelXp = LEVEL_26_XP;
+  } else if (nextLevel === 27) {
+    nextLevelXp = LEVEL_27_XP;
+  } else if (nextLevel === 28) {
+    nextLevelXp = LEVEL_28_XP;
+  } else if (nextLevel === 29) {
+    nextLevelXp = LEVEL_29_XP;
+  } else if (nextLevel === 30) {
+    nextLevelXp = LEVEL_30_XP;
+  } else if (nextLevel === 31) {
+    nextLevelXp = LEVEL_31_XP;
+  } else if (nextLevel === 32) {
+    nextLevelXp = LEVEL_32_XP;
+  } else if (nextLevel === 33) {
+    nextLevelXp = LEVEL_33_XP;
+  } else if (nextLevel === 34) {
+    nextLevelXp = LEVEL_34_XP;
+  } else if (nextLevel === 35) {
+    nextLevelXp = LEVEL_35_XP;
+  } else if (nextLevel === 36) {
+    nextLevelXp = LEVEL_36_XP;
+  } else if (nextLevel === 37) {
+    nextLevelXp = LEVEL_37_XP;
+  } else if (nextLevel === 38) {
+    nextLevelXp = LEVEL_38_XP;
+  } else if (nextLevel === 39) {
+    nextLevelXp = LEVEL_39_XP;
+  } else if (nextLevel === 40) {
+    nextLevelXp = LEVEL_40_XP;
+  } else if (nextLevel === 41) {
+    nextLevelXp = LEVEL_41_XP;
+  } else if (nextLevel === 42) {
+    nextLevelXp = LEVEL_42_XP;
+  } else if (nextLevel === 43) {
+    nextLevelXp = LEVEL_43_XP;
+  } else if (nextLevel === 44) {
+    nextLevelXp = LEVEL_44_XP;
+  } else if (nextLevel === 45) {
+    nextLevelXp = LEVEL_45_XP;
+  } else if (nextLevel === 46) {
+    nextLevelXp = LEVEL_46_XP;
+  } else if (nextLevel === 47) {
+    nextLevelXp = LEVEL_47_XP;
+  } else if (nextLevel === 48) {
+    nextLevelXp = LEVEL_48_XP;
+  } else if (nextLevel === 49) {
+    nextLevelXp = LEVEL_49_XP;
+  } else if (nextLevel === 50) {
+    nextLevelXp = LEVEL_50_XP;
+  }
+
+  return Math.floor(100 - (xpNeeded / nextLevelXp) * 100);
+};

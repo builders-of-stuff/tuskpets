@@ -1,4 +1,4 @@
-import { xpToLevel } from './shared-tools';
+import { xpNeededtoNextLevel, xpProgressPercentage, xpToLevel } from './shared-tools';
 import { ACTIVITY_CONFIG } from './shared.constant';
 
 export class Tuskpet {
@@ -15,6 +15,14 @@ export class Tuskpet {
   divingLvl = $derived(xpToLevel(this.skills?.divingXp));
   miningLvl = $derived(xpToLevel(this.skills?.miningXp));
   craftingLvl = $derived(xpToLevel(this.skills?.craftingXp));
+
+  divingNextLvlXpNeeded = $derived(xpNeededtoNextLevel(this.skills?.divingXp));
+  miningNextLvlXpNeeded = $derived(xpNeededtoNextLevel(this.skills?.miningXp));
+  craftingNextLvlXpNeeded = $derived(xpNeededtoNextLevel(this.skills?.craftingXp));
+
+  divingNextLvlXpProgress = $derived(xpProgressPercentage(this.skills?.divingXp));
+  miningNextLvlXpProgress = $derived(xpProgressPercentage(this.skills?.miningXp));
+  craftingNextLvlXpProgress = $derived(xpProgressPercentage(this.skills?.craftingXp));
 
   currentActivityBaseTime = $derived.by(() => {
     if (!this.currentActivity) return null;

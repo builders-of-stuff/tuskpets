@@ -146,7 +146,7 @@
         }
       }
 
-      appState.tuskpet[`${skillType}Xp`] += xp;
+      appState.tuskpet.skills[`${skillType}Xp`] += xp;
       appState.tuskpet.currentActivity = null;
       appState.tuskpet.activityStart = null;
 

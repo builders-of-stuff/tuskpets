@@ -15,7 +15,8 @@
     ACTIVITY_CONFIG,
     PACKAGE_ID,
     SKILL_IMAGES,
-    SKILLS_CONFIG
+    SKILLS_CONFIG,
+    TYPE_CONFIG
   } from '$lib/shared/shared.constant';
   import { appState } from '$lib/shared/state.svelte';
   import { finishActivity, startActivity } from '$lib/shared/contract-tools';
@@ -133,7 +134,11 @@
         item = {
           id: itemId,
           quantity: Number(intervals),
-          type: itemType
+          type: itemType,
+
+          name: TYPE_CONFIG[itemType]?.name,
+          description: TYPE_CONFIG[itemType]?.description,
+          image: TYPE_CONFIG[itemType]?.image
         };
         appState.tuskpet.inventory = [...appState.tuskpet.inventory, item];
       } else {

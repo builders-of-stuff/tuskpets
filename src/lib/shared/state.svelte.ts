@@ -12,6 +12,12 @@ export class Tuskpet {
 
   currentDate = $state(Date.now());
 
+  currentSkill = $derived.by(() => {
+    if (!this.currentActivity) return null;
+
+    return ACTIVITY_CONFIG[this.currentActivity]?.skill;
+  });
+
   divingLvl = $derived(xpToLevel(this.skills?.divingXp));
   miningLvl = $derived(xpToLevel(this.skills?.miningXp));
   craftingLvl = $derived(xpToLevel(this.skills?.craftingXp));

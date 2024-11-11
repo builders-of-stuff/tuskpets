@@ -1,16 +1,36 @@
+import { xpToLevel } from './shared-tools';
+import { ACTIVITY_CONFIG } from './shared.constant';
+
 export class Tuskpet {
   id = $state('');
   b36Address = $state('');
-  stats = $state({});
-  skills = $state({});
-  currentActivity = $state();
+  stats = $state({}) as any;
+  skills = $state({}) as any;
+  currentActivity = $state() as any;
   activityStart = $state() as any;
   inventory = $state([]);
 
   currentDate = $state(Date.now());
 
-  isBusy = $derived(!!this.currentActivity || !!this.activityStart);
+  divingLvl = $derived(xpToLevel(this.skills?.divingXp));
+  miningLvl = $derived(xpToLevel(this.skills?.miningXp));
+  craftingLvl = $derived(xpToLevel(this.skills?.craftingXp));
 
+  currentActivityBaseTime = $derived.by(() => {
+    if (!this.currentActivity) return null;
+
+    return ACTIVITY_CONFIG[this.currentActivity]?.baseTime;
+  });
+  curentActivityBaseXp = $derived.by(() => {
+    if (!this.currentActivity) return null;
+
+    return ACTIVITY_CONFIG[this.currentActivity]?.baseXp;
+  });
+
+  /**
+   * Activity duration
+   */
+  isBusy = $derived(!!this.currentActivity || !!this.activityStart);
   // How long the current activity has been running (ms)
   activityDurationMs = $derived.by(() => {
     if (!this.activityStart) return null;
@@ -58,6 +78,9 @@ export class Tuskpet {
       .replace(/^00:/, '');
   });
 
+  /**
+   * Constructor
+   */
   constructor(tuskpet) {
     this.id = tuskpet.id;
     this.b36Address = tuskpet.b36Address;

@@ -5,10 +5,6 @@
   import FullWalrus from '$lib/assets/full-walrus.png';
   import { appState } from '$lib/shared/state.svelte';
   import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
-
-  $effect(() => {
-    console.log('thing: ', appState.tuskpet.inventory);
-  });
 </script>
 
 <div class="container mx-auto p-4">

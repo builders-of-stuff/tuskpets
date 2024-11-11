@@ -20,10 +20,7 @@
   import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
   import { dropTuskpet, mintTuskpet } from '$lib/shared/contract-tools';
   import { appState, Tuskpet } from '$lib/shared/state.svelte';
-  import {
-    inventoryObjectsToInventory,
-    tuskpetObjectToTuskpet
-  } from '$lib/shared/mappers';
+  import { tuskpetObjectToTuskpet } from '$lib/shared/mappers';
 
   import '../app.css';
 
@@ -116,8 +113,7 @@
     }
 
     if (response) {
-      appState.tuskpet = new Tuskpet(tuskpetObjectToTuskpet(response));
-      appState.tuskpet.inventory = inventoryObjectsToInventory(inventoryItems);
+      appState.tuskpet = new Tuskpet(tuskpetObjectToTuskpet(response, inventoryItems));
       goto('/game');
     }
 

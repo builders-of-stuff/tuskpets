@@ -11,7 +11,11 @@
   import * as Dialog from '$lib/components/ui/dialog/index';
   import * as Alert from '$lib/components/ui/alert/index';
 
-  import { SKILLS_CONFIG } from '$lib/shared/shared.constant';
+  import {
+    ACTIVITY_CONFIG,
+    PACKAGE_ID,
+    SKILLS_CONFIG
+  } from '$lib/shared/shared.constant';
   import { appState } from '$lib/shared/state.svelte';
   import { finishActivity, startActivity } from '$lib/shared/contract-tools';
   import { formatSeconds } from '$lib/shared/shared-tools';
@@ -94,16 +98,44 @@
    * Finish activity
    */
   const handleFinishActivity = async (tuskpetObjectId: string) => {
-    // reset current_activity
-    // reset activity_start
     // set xp
     // set inventory item
 
-    const txResponse = await finishActivity(tuskpetObjectId);
-
-    console.log('txResponse: ', txResponse);
+    const txResponse = (await finishActivity(tuskpetObjectId)) as any;
 
     if (txResponse) {
+      const intervals =
+        elapsedActivityDurationSeconds / appState.tuskpet?.currentActivityBaseXp;
+      const xp = intervals * appState.tuskpet?.currentActivityBaseXp;
+      const skillType = ACTIVITY_CONFIG[appState.tuskpet?.currentActivity]?.skill;
+      const itemType = ACTIVITY_CONFIG[appState.tuskpet?.currentActivity]?.type;
+
+      const itemId = txResponse?.objectChanges?.find?.(
+        (objectChange) =>
+          objectChange?.type === 'created' &&
+          objectChange?.objectType === `${PACKAGE_ID}::tuskpet::Item`
+      )?.objectId;
+
+      let item;
+
+      if (itemId) {
+        item = {
+          id: itemId,
+          quantity: Number(intervals),
+          type: itemType
+        };
+        appState.tuskpet.inventory = [...appState.tuskpet.inventory, item];
+      } else {
+        const existingItem = appState.tuskpet?.inventory?.find(
+          (invItem) => invItem.type === itemType
+        );
+
+        if (existingItem) {
+          existingItem.quantity += intervals;
+        }
+      }
+
+      appState.tuskpet[`${skillType}Xp`] += xp;
       appState.tuskpet.currentActivity = null;
       appState.tuskpet.activityStart = null;
 

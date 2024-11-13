@@ -2,12 +2,21 @@
   import { SquareArrowOutUpRight, Check, X } from 'lucide-svelte';
   import { toast } from 'svelte-sonner';
 
+  import { goto } from '$app/navigation';
   import { Button } from '$lib/components/ui/button';
   import { Progress } from '$lib/components/ui/progress';
   import * as Card from '$lib/components/ui/card/index';
+  import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
   import FullWalrus from '$lib/assets/full-walrus.png';
+  import Strength from '$lib/assets/strength.png';
+  import Defence from '$lib/assets/defence.png';
+  import Health from '$lib/assets/health.png';
+  import Mining from '$lib/assets/mining.png';
+  import Crafting from '$lib/assets/crafting.png';
+  import Diving from '$lib/assets/diving.png';
   import { appState } from '$lib/shared/state.svelte';
+
   import {
     formatSeconds,
     toBlockExplorer,
@@ -22,9 +31,43 @@
   import { finishActivity } from '$lib/shared/contract-tools';
 
   /**
+   * Skills & Stats
+   */
+  const skills = [
+    {
+      name: 'Diving',
+      image: Diving,
+      level: appState.tuskpet.divingLvl
+    },
+    {
+      name: 'Mining',
+      image: Mining,
+      level: appState.tuskpet.miningLvl
+    },
+    {
+      name: 'Crafting',
+      image: Crafting,
+      level: appState.tuskpet.craftingLvl
+    },
+    {
+      name: 'Strength',
+      image: Strength,
+      level: 1
+    },
+    {
+      name: 'Defence',
+      image: Defence,
+      level: 1
+    }
+  ];
+
+  const totalLevel = $derived.by(() => {
+    return skills.reduce((acc, skill) => acc + skill.level, 0);
+  });
+
+  /**
    * Active skill/current action
    */
-
   const activeActivity = $derived.by(() => {
     if (!appState.tuskpet?.isBusy) {
       return;
@@ -177,6 +220,10 @@
                 <SquareArrowOutUpRight size={12} />
               </a>
             </div>
+
+            <div class="rounded bg-gray-700 px-2 py-1 text-xs">
+              Total Lv. {totalLevel}
+            </div>
           </Card.Content>
         </Card.Root>
       </Card.Content>
@@ -243,9 +290,25 @@
         {/if}
 
         <Card.Root class="bg-muted">
-          <Card.Content class="flex flex-col items-center justify-center gap-2  p-6">
-            <div class="flex flex-row items-center">
-              <span class="text-xl font-semibold"> Health </span>
+          <Card.Content class="flex flex-col items-center justify-center gap-2 p-6">
+            <div class="flex w-full flex-row items-center justify-start">
+              <Card.Root class="relative w-full bg-gray-800/50 p-4">
+                <div class="flex items-center gap-3">
+                  <div class="relative">
+                    <img src={Health} alt="" class="h-12 w-12" />
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-white"> Health </span>
+                    </div>
+                    <Progress value={100} class="mt-1" />
+                    <div class="mt-2 flex items-center justify-between">
+                      <span class="text-xs text-gray-400"> 100 of 100</span>
+                      <!-- <span class="text-xs text-gray-400">100%</span> -->
+                    </div>
+                  </div>
+                </div>
+              </Card.Root>
             </div>
           </Card.Content>
         </Card.Root>
@@ -253,13 +316,88 @@
 
       <!-- Right column (2/3) -->
       <div class="col-span-2 space-y-4">
-        <Card.Root class="bg-muted">
-          <Card.Content class="flex flex-col items-center justify-center gap-2  p-6">
+        <!-- Stats -->
+        <div class="relative flex items-center">
+          <div class="flex-grow border-t border-gray-700"></div>
+          <span class="mx-4 flex-shrink text-xs text-gray-400">STATS</span>
+          <div class="flex-grow border-t border-gray-700"></div>
+        </div>
+
+        <!-- <Card.Root class="bg-muted">
+          <Card.Content class="flex flex-col items-center justify-center gap-2 p-6">
             <div class="flex flex-row items-center">
               <span class="text-xl font-semibold"> Skills & stats </span>
             </div>
           </Card.Content>
-        </Card.Root>
+        </Card.Root> -->
+
+        {#each skills as skill}
+          {@const image = skill?.image}
+          {@const name = skill?.name}
+          {@const level = skill?.level}
+
+          <button class="relative cursor-pointer">
+            <Tooltip.Provider>
+              <Tooltip.Root>
+                <Tooltip.Trigger>
+                  <Card.Root
+                    class="mr-2 h-24 w-24 bg-muted p-1 transition-all hover:ring-2 hover:ring-primary"
+                  >
+                    <img src={image} alt={name} class="h-full w-full object-contain" />
+                  </Card.Root>
+                </Tooltip.Trigger>
+                <Tooltip.Content>
+                  <p>{name}</p>
+                </Tooltip.Content>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+
+            <span
+              class="absolute -left-2 -top-2 z-10 rounded bg-gray-700 px-2 py-1 text-xs"
+            >
+              Lv. {level}
+            </span>
+          </button>
+        {/each}
+
+        <!-- Inventory -->
+        <div class="relative flex items-center">
+          <div class="flex-grow border-t border-gray-700"></div>
+          <span class="mx-4 flex-shrink text-xs text-gray-400">INVENTORY</span>
+          <div class="flex-grow border-t border-gray-700"></div>
+        </div>
+
+        {#each appState.tuskpet.inventory as item}
+          {@const image = item?.image}
+          {@const name = item?.name}
+          {@const quantity = item?.quantity}
+
+          <button class="relative cursor-pointer">
+            <Tooltip.Provider>
+              <Tooltip.Root>
+                <Tooltip.Trigger
+                  ><Card.Root
+                    class="mr-2 h-24 w-24 bg-muted p-1 transition-all hover:ring-2 hover:ring-primary"
+                    onclick={() => goto('/game/inventory')}
+                  >
+                    <img src={image} alt={name} class="h-full w-full object-contain" />
+                  </Card.Root></Tooltip.Trigger
+                >
+                <Tooltip.Content>
+                  <p>{name}</p>
+                </Tooltip.Content>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+
+            {#if quantity > 0}
+              <span
+                class="absolute -left-2 -top-2 z-10 rounded bg-gray-700 px-2 py-1 text-xs"
+              >
+                {quantity}
+              </span>
+            {/if}
+          </button>
+        {/each}
       </div>
     </div>
   </div>

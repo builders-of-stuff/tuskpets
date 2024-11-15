@@ -161,7 +161,15 @@ export const SKILLS_CONFIG = {
         description: `A time-honored walrus tradition: creating a frozen friend! While it might not be the most practical creation, there's something heartwarming about building a cheerful snow companion. Some walruses insist on using a carrot for the nose, though nobody's quite sure where they get them.`,
         code: 301,
         requirements: {
-          level: 1
+          level: 1,
+          items: [
+            {
+              type: ITEM_TYPE.COMPACT_SNOW,
+              name: 'Compact snow',
+              image: Snow,
+              quantity: 5
+            }
+          ]
         },
         baseTime: 10,
         baseXp: 10
@@ -174,7 +182,8 @@ export const SKILLS_CONFIG = {
         description: `A sophisticated piece of protective headgear crafted from carefully shaped ice. Not only does it keep your head cool under pressure, but it also makes you look rather dashing. The ultimate fashion statement for the safety-conscious walrus.`,
         code: 302,
         requirements: {
-          level: 5
+          level: 5,
+          items: [{ type: ITEM_TYPE.ICE, name: 'Ice', image: Ice, quantity: 5 }]
         },
         baseTime: 20,
         baseXp: 100
@@ -187,7 +196,10 @@ export const SKILLS_CONFIG = {
         description: `The pinnacle of walrus crafting achievement! These magnificent blade attachments transform ordinary tusks into extraordinary tools. Carefully forged from the finest materials, they're perfect for everything from ice carving to impressing other walruses at social gatherings. A true mark of mastery.`,
         code: 303,
         requirements: {
-          level: 10
+          level: 10,
+          items: [
+            { type: ITEM_TYPE.BLUE_ICE, name: 'Blue ice', image: BlueIce, quantity: 10 }
+          ]
         },
         baseTime: 30,
         baseXp: 1000

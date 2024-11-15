@@ -323,14 +323,6 @@
           <div class="flex-grow border-t border-gray-700"></div>
         </div>
 
-        <!-- <Card.Root class="bg-muted">
-          <Card.Content class="flex flex-col items-center justify-center gap-2 p-6">
-            <div class="flex flex-row items-center">
-              <span class="text-xl font-semibold"> Skills & stats </span>
-            </div>
-          </Card.Content>
-        </Card.Root> -->
-
         {#each skills as skill}
           {@const image = skill?.image}
           {@const name = skill?.name}

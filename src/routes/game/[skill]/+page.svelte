@@ -207,6 +207,10 @@
       toast.error('Activity failed to start');
     }
   };
+
+  $effect(() => {
+    console.log('appState.tuskpet.inventory: ', appState.tuskpet.inventory);
+  });
 </script>
 
 {#snippet skillActivities(skill: string)}
@@ -219,6 +223,12 @@
 {/snippet}
 
 {#snippet skillActivity(activityConfig)}
+  {@const lvlRequirement = activityConfig.requirements.level}
+  {@const itemRequirements = activityConfig.requirements.items || []}
+  {@const hasItemRequirements = itemRequirements?.length > 0}
+  {@const skill = activityConfig.skill}
+  {@const isHighEnoughLvl = appState.tuskpet[`${skill}Lvl`] >= lvlRequirement}
+
   <Card
     onclick={() => handleResourceClick(activityConfig)}
     class="bg-gray-800/50 transition-colors hover:bg-gray-800/70"
@@ -229,8 +239,10 @@
         <div class="flex flex-col gap-1">
           <h3 class="font-medium text-white">{activityConfig.name}</h3>
           <div class="flex gap-2 text-sm text-gray-400">
-            <span class="rounded bg-gray-700 px-2 py-0.5">
-              Lv. {activityConfig.requirements.level}
+            <span
+              class={`rounded px-2 py-0.5 ${isHighEnoughLvl ? `bg-gray-700` : `bg-red-700/20 text-red-400`}`}
+            >
+              Lv. {lvlRequirement}
             </span>
             <span class="rounded bg-gray-700 px-2 py-0.5">
               {activityConfig.baseXp} EXP
@@ -241,11 +253,18 @@
               <Clock7 class="h-4 w-4" />
               {activityConfig.baseTime}s
             </span>
-            <!-- {#each activityConfig.requirements as req}
-              <span class="rounded bg-red-900/50 px-2 py-0.5">
-                {req.amount}x {req.item}
-              </span>
-            {/each} -->
+            {#if hasItemRequirements}
+              {#each itemRequirements as req}
+                {@const meetsItemReq =
+                  appState.tuskpet.inventory.find((item) => item.type === req.type)
+                    ?.quantity >= req.quantity}
+                <span
+                  class={`rounded ${meetsItemReq ? `bg-gray-700 text-gray-400` : `bg-red-700/20 text-red-400`} px-2 py-0.5 `}
+                >
+                  {req.quantity}x {req.name}
+                </span>
+              {/each}
+            {/if}
           </div>
         </div>
       </div>
@@ -372,6 +391,15 @@
 <!-- Modal -->
 <Dialog.Root bind:open={showModal}>
   <Dialog.Content class="border-gray-700 bg-gray-800 text-white sm:max-w-[425px]">
+    {@const isBusy = appState.tuskpet.isBusy}
+    {@const skill =
+      selectedActivity?.skill.charAt(0).toUpperCase() +
+      selectedActivity?.skill.slice(1)}
+    {@const baseXp = selectedActivity?.baseXp}
+    {@const baseTime = selectedActivity?.baseTime}
+    {@const itemRequirements = selectedActivity?.requirements.items || []}
+    {@const hasItemRequirements = itemRequirements?.length > 0}
+
     <Dialog.Header>
       <div class="flex flex-col items-center gap-4">
         {#if selectedActivity}
@@ -385,109 +413,109 @@
               Lv. {selectedActivity.requirements.level}
             </span>
             <span class="rounded bg-gray-700 px-3 py-1">
-              {selectedActivity.baseTime} seconds
+              {baseTime} seconds
             </span>
-            <span class="rounded bg-indigo-900/50 px-3 py-1">+1 Speed EXP</span>
+            <span class="rounded bg-indigo-900/50 px-3 py-1">+{baseXp} {skill} EXP</span
+            >
           </div>
-          <span class="rounded bg-indigo-900/50 px-3 py-1">
-            +{selectedActivity.baseXp} Smelting EXP
-          </span>
         {/if}
       </div>
     </Dialog.Header>
 
     <div class="space-y-6 pt-4">
-      <div>
-        <h3 class="mb-3 text-gray-400">REQUIREMENTS</h3>
-        <div class="flex gap-2">
-          {#if selectedActivity?.requirements}
-            {#each selectedActivity.requirements as req}
+      {#if hasItemRequirements}
+        <div>
+          <h3 class="mb-3 text-gray-400">REQUIREMENTS</h3>
+          <div class="flex gap-2">
+            {#each itemRequirements as req}
+              {@const reqImage = req.image}
+
               <div class="relative">
-                <img
-                  src={`/${req.item.toLowerCase()}.png`}
-                  alt=""
-                  class="h-16 w-16 rounded bg-gray-700 p-2"
-                />
+                <img src={reqImage} alt="" class="h-16 w-16 rounded bg-gray-700 p-2" />
                 <span
-                  class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-900 text-sm text-white"
+                  class="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-gray-900 text-sm text-white"
                 >
-                  {req.amount}
+                  {req.quantity}
                 </span>
               </div>
             {/each}
-          {/if}
-        </div>
-      </div>
-
-      <div>
-        <h3 class="mb-3 text-gray-400">QUANTITY</h3>
-
-        {#if !hasEnoughMaterials}
-          <Alert.Root
-            variant="destructive"
-            class="mb-3 border-red-900 bg-red-900/50 text-white"
-          >
-            <Alert.Description class="flex items-center gap-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-4 w-4"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              Not enough materials
-            </Alert.Description>
-          </Alert.Root>
-        {/if}
-
-        <div class="flex gap-2">
-          <div class="flex-1">
-            <Input
-              type="number"
-              bind:value={quantity}
-              class="border-gray-700 bg-gray-900 text-white"
-              min="1"
-            />
           </div>
-          <Button
-            variant="secondary"
-            class="bg-gray-700 hover:bg-gray-600"
-            onclick={setMaxQuantity}
-          >
-            Max
-          </Button>
-          <Button
-            variant="secondary"
-            class="bg-gray-700 hover:bg-gray-600"
-            onclick={() => quantity > 1 && quantity--}
-          >
-            -
-          </Button>
-          <Button
-            variant="secondary"
-            class="bg-gray-700 hover:bg-gray-600"
-            onclick={() => quantity++}
-          >
-            +
-          </Button>
         </div>
-      </div>
+
+        <div>
+          <h3 class="mb-3 text-gray-400">QUANTITY</h3>
+
+          {#if !hasEnoughMaterials}
+            <Alert.Root
+              variant="destructive"
+              class="mb-3 border-red-900 bg-red-900/50 text-white"
+            >
+              <Alert.Description class="flex items-center gap-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                Not enough materials
+              </Alert.Description>
+            </Alert.Root>
+          {/if}
+
+          <div class="flex gap-2">
+            <div class="flex-1">
+              <Input
+                type="number"
+                bind:value={quantity}
+                class="border-gray-700 bg-gray-900 text-white"
+                min="1"
+              />
+            </div>
+            <Button
+              variant="secondary"
+              class="bg-gray-700 hover:bg-gray-600"
+              onclick={setMaxQuantity}
+            >
+              Max
+            </Button>
+            <Button
+              variant="secondary"
+              class="bg-gray-700 hover:bg-gray-600"
+              onclick={() => quantity > 1 && quantity--}
+            >
+              -
+            </Button>
+            <Button
+              variant="secondary"
+              class="bg-gray-700 hover:bg-gray-600"
+              onclick={() => quantity++}
+            >
+              +
+            </Button>
+          </div>
+        </div>
+      {/if}
 
       <div class="flex gap-2 pt-2">
         <Button
           onclick={() => handleStartActivity(selectedActivity)}
           variant="default"
-          class="flex-1 bg-indigo-600 hover:bg-indigo-700"
-          disabled={!hasEnoughMaterials}
+          class="flex-1 bg-indigo-600 text-white hover:bg-indigo-700"
+          disabled={!hasEnoughMaterials || isBusy}
         >
-          Start
+          {#if isBusy}
+            Cannot start while tuskpet is busy
+          {:else}
+            Start
+          {/if}
         </Button>
       </div>
     </div>

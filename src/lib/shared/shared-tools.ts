@@ -415,3 +415,24 @@ export const xpProgressPercentage = (xp: number) => {
 
   return Math.floor(100 - (xpNeeded / nextLevelXp) * 100);
 };
+
+export const hasRequiredItems = (itemRequirements, inventory) => {
+  return itemRequirements.every((item) => {
+    return inventory.some(
+      (inventoryItem) =>
+        inventoryItem.type === item.type && inventoryItem.quantity >= item.quantity
+    );
+  });
+};
+
+export const getMaxQuantity = (itemRequirements, inventory) => {
+  return Math.min(
+    ...itemRequirements.map((item) => {
+      const inventoryItem = inventory.find(
+        (inventoryItem) => inventoryItem.type === item.type
+      );
+
+      return inventoryItem ? Math.floor(inventoryItem.quantity / item.quantity) : 0;
+    })
+  );
+};

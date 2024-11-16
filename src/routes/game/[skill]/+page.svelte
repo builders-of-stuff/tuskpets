@@ -20,7 +20,11 @@
   } from '$lib/shared/shared.constant';
   import { appState } from '$lib/shared/state.svelte';
   import { finishActivity, startActivity } from '$lib/shared/contract-tools';
-  import { formatSeconds } from '$lib/shared/shared-tools';
+  import {
+    formatSeconds,
+    getMaxQuantity,
+    hasRequiredItems
+  } from '$lib/shared/shared-tools';
 
   const skill = $derived($page?.params?.skill);
 
@@ -167,23 +171,10 @@
   let selectedActivity = $state(null as any);
   let quantity = $state(1);
   let showModal = $state(false);
-  let hasEnoughMaterials = $state(true);
 
   function handleResourceClick(activity) {
     selectedActivity = activity;
     showModal = true;
-    // Check if player has enough materials
-    hasEnoughMaterials = checkMaterials(activity);
-  }
-
-  function checkMaterials(activity) {
-    // Implement your logic to check if player has required materials
-    return true; // For this example
-  }
-
-  function setMaxQuantity() {
-    // Implement max quantity logic based on available materials
-    quantity = 10; // Example value
   }
 
   const handleStartActivity = async (selectedActivity) => {
@@ -399,6 +390,21 @@
     {@const baseTime = selectedActivity?.baseTime}
     {@const itemRequirements = selectedActivity?.requirements.items || []}
     {@const hasItemRequirements = itemRequirements?.length > 0}
+    {@const meetsItemRequirements =
+      hasItemRequirements &&
+      hasRequiredItems(itemRequirements, appState.tuskpet.inventory)}
+    {@const maxQuantity = getMaxQuantity(itemRequirements, appState.tuskpet.inventory)}
+    {@const isOverMaxQuantity = quantity > maxQuantity}
+
+    {@const showErrorMessage =
+      (hasItemRequirements && !meetsItemRequirements) || isBusy || isOverMaxQuantity}
+    {@const errorMessage = isBusy
+      ? `Cannot start while tuskpet is busy`
+      : meetsItemRequirements
+        ? isOverMaxQuantity
+          ? `Not enough materials`
+          : ''
+        : `Not enough materials`}
 
     <Dialog.Header>
       <div class="flex flex-col items-center gap-4">
@@ -445,31 +451,6 @@
         <div>
           <h3 class="mb-3 text-gray-400">QUANTITY</h3>
 
-          {#if !hasEnoughMaterials}
-            <Alert.Root
-              variant="destructive"
-              class="mb-3 border-red-900 bg-red-900/50 text-white"
-            >
-              <Alert.Description class="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                Not enough materials
-              </Alert.Description>
-            </Alert.Root>
-          {/if}
-
           <div class="flex gap-2">
             <div class="flex-1">
               <Input
@@ -482,7 +463,9 @@
             <Button
               variant="secondary"
               class="bg-gray-700 hover:bg-gray-600"
-              onclick={setMaxQuantity}
+              onclick={() => {
+                quantity = maxQuantity;
+              }}
             >
               Max
             </Button>
@@ -504,18 +487,35 @@
         </div>
       {/if}
 
+      {#if showErrorMessage}
+        <Alert.Root
+          variant="destructive"
+          class=" border-red-900 bg-red-900/50 text-white"
+        >
+          <Alert.Description class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24">
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            {errorMessage}
+          </Alert.Description>
+        </Alert.Root>
+      {/if}
+
       <div class="flex gap-2 pt-2">
         <Button
           onclick={() => handleStartActivity(selectedActivity)}
           variant="default"
           class="flex-1 bg-indigo-600 text-white hover:bg-indigo-700"
-          disabled={!hasEnoughMaterials || isBusy}
+          disabled={showErrorMessage}
         >
-          {#if isBusy}
-            Cannot start while tuskpet is busy
-          {:else}
-            Start
-          {/if}
+          Start
         </Button>
       </div>
     </div>

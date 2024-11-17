@@ -8,10 +8,6 @@
   function selectItem(item) {
     selectedItem = item;
   }
-
-  $effect(() => {
-    console.log('appState.tuskpet.inventory: ', appState.tuskpet.inventory);
-  });
 </script>
 
 <div class="container mx-auto p-4">

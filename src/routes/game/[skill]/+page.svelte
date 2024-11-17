@@ -208,10 +208,6 @@
       toast.error('Activity failed to start');
     }
   };
-
-  $effect(() => {
-    console.log('appState.tuskpet.inventory: ', appState.tuskpet.inventory);
-  });
 </script>
 
 {#snippet skillActivities(skill: string)}

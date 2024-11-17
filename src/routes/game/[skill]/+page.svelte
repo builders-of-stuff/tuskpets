@@ -19,7 +19,11 @@
     TYPE_CONFIG
   } from '$lib/shared/shared.constant';
   import { appState } from '$lib/shared/state.svelte';
-  import { finishActivity, startActivity } from '$lib/shared/contract-tools';
+  import {
+    finishActivity,
+    startActivity,
+    startCraftingActivity
+  } from '$lib/shared/contract-tools';
   import {
     formatSeconds,
     getMaxQuantity,
@@ -183,9 +187,15 @@
     }
 
     const code = selectedActivity.code;
+    const isCraftingActivity = selectedActivity.skill === 'crafting';
     const tuskpetId = appState.tuskpet?.id;
 
-    const executedTx = await startActivity(code, tuskpetId);
+    let executedTx;
+    if (isCraftingActivity) {
+      executedTx = await startCraftingActivity(code, quantity, tuskpetId);
+    } else {
+      executedTx = await startActivity(code, tuskpetId);
+    }
 
     if (executedTx) {
       const now = Date.now();

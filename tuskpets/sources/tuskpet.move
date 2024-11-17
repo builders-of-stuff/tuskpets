@@ -17,6 +17,7 @@ const VISUALIZATION_SITE: address =
 const EBusyWalrus: u64 = 0;
 const EIdleWalrus: u64 = 1;
 const EActivityFinishTooSoon: u64 = 2;
+const EInsufficientCraftingItems: u64 = 3;
 
 // === Items === 
 const SOFT_SHELL_CLAM: vector<u8> = b"soft_shell_clam";
@@ -187,7 +188,7 @@ public fun mint(ctx: &mut TxContext): Tuskpet {
     walrus
 }
 
-entry fun start_activity(code: u64, walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext) {
+public fun start_activity(code: u64, walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxContext) {
     assert!(option::is_none<u64>(&walrus.current_activity), EBusyWalrus);
     assert!(option::is_none<u64>(&walrus.activity_start), EBusyWalrus);
 
@@ -216,9 +217,9 @@ public fun finish_activity(walrus: &mut Tuskpet, clock: &Clock, ctx: &mut TxCont
 
     assert!(elapsed_s > 0, EActivityFinishTooSoon);
 
-    let diving_lvl = xp_to_level(walrus.skills.diving_xp);
-    let mining_lvl = xp_to_level(walrus.skills.mining_xp);
-    let crafting_lvl = xp_to_level(walrus.skills.crafting_xp);
+    // let diving_lvl = xp_to_level(walrus.skills.diving_xp);
+    // let mining_lvl = xp_to_level(walrus.skills.mining_xp);
+    // let crafting_lvl = xp_to_level(walrus.skills.crafting_xp);
 
     if (code == DIVING_SOFT_SHELL_CLAM) {
         let intervals = elapsed_s / DIVING_SOFT_SHELL_CLAM_TIME;
@@ -416,6 +417,84 @@ public fun item_to_inventory(item: Item, walrus: &mut Tuskpet, ctx: &mut TxConte
     } else {
         object_bag::add(&mut walrus.inventory, item.`type`, item);
     };
+}
+
+public fun consume_snowman_reqs(quantity: u64, walrus: &mut Tuskpet, ctx: &mut TxContext) {
+    let inventory = &mut walrus.inventory;
+    let is_existing_item = object_bag::contains(inventory, string::utf8(COMPACT_SNOW));
+    assert!(is_existing_item, EInsufficientCraftingItems);
+
+    // hard-coded for now, should stay in sync with frontend
+    let requirement_quantity = quantity * 5;
+
+    let mut should_remove = false;
+
+    {
+        let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(COMPACT_SNOW));
+        existing_item.quantity = existing_item.quantity - requirement_quantity;
+        if (existing_item.quantity == 0) {
+            should_remove = true;
+        }
+    };
+
+    if (should_remove) {
+        let item = object_bag::remove<String, Item>(inventory, string::utf8(COMPACT_SNOW));
+
+        let Item { id, quantity: _, `type`: _ } = item;
+        object::delete(id);
+    }
+}
+
+public fun consume_ice_helmet_reqs(quantity: u64, walrus: &mut Tuskpet, ctx: &mut TxContext) {
+    let inventory = &mut walrus.inventory;
+    let is_existing_item = object_bag::contains(inventory, string::utf8(ICE));
+    assert!(is_existing_item, EInsufficientCraftingItems);
+
+    // hard-coded for now, should stay in sync with frontend
+    let requirement_quantity = quantity * 5;
+
+    let mut should_remove = false;
+
+    {
+        let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(ICE));
+        existing_item.quantity = existing_item.quantity - requirement_quantity;
+        if (existing_item.quantity == 0) {
+            should_remove = true;
+        }
+    };
+
+    if (should_remove) {
+        let item = object_bag::remove<String, Item>(inventory, string::utf8(ICE));
+
+        let Item { id, quantity: _, `type`: _ } = item;
+        object::delete(id);
+    }
+}
+
+public fun consume_tusk_blades_reqs(quantity: u64, walrus: &mut Tuskpet, ctx: &mut TxContext) {
+    let inventory = &mut walrus.inventory;
+    let is_existing_item = object_bag::contains(inventory, string::utf8(BLUE_ICE));
+    assert!(is_existing_item, EInsufficientCraftingItems);
+
+    // hard-coded for now, should stay in sync with frontend
+    let requirement_quantity = quantity * 10;
+
+    let mut should_remove = false;
+
+    {
+        let existing_item = object_bag::borrow_mut<String, Item>(inventory, string::utf8(BLUE_ICE));
+        existing_item.quantity = existing_item.quantity - requirement_quantity;
+        if (existing_item.quantity == 0) {
+            should_remove = true;
+        }
+    };
+
+    if (should_remove) {
+        let item = object_bag::remove<String, Item>(inventory, string::utf8(BLUE_ICE));
+
+        let Item { id, quantity: _, `type`: _ } = item;
+        object::delete(id);
+    }
 }
 
 

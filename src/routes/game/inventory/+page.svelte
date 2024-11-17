@@ -35,13 +35,13 @@
             >
               <img src={image} alt={name} class="h-full w-full object-contain" />
             </Card>
-            {#if quantity > 0}
-              <span
-                class="absolute -left-2 -top-2 z-10 rounded bg-gray-700 px-2 py-1 text-xs"
-              >
-                {quantity}
-              </span>
-            {/if}
+            <!-- {#if quantity > 0} -->
+            <span
+              class="absolute -left-2 -top-2 z-10 rounded bg-gray-700 px-2 py-1 text-xs"
+            >
+              {quantity}
+            </span>
+            <!-- {/if} -->
           </button>
         {/each}
       </div>

@@ -13,17 +13,19 @@ import Mining from '$lib/assets/mining.png';
 
 import { ITEM_TYPE } from './shared.type';
 
+// export const PACKAGE_ID =
+//   '0x5d26d1a6d75745e1cae29e28e4b96fc500ee92e5f588a4b59da5af5f187e6cc8';
 export const PACKAGE_ID =
-  '0x5d26d1a6d75745e1cae29e28e4b96fc500ee92e5f588a4b59da5af5f187e6cc8';
+  '0x8214a0228386322dd88e123dfb74ed6b515a0bd1dd2e8399a76ae1def1011373';
 
 export const PUBLISHER_ID =
-  '0xbff286590bf71b1a308a6303a36c14d805d3f01ede7c33c885edbc025b274fdd';
+  '0x63f97450fb9a52712903ebf733e21963ff4dd992caa18c0c07e55ad6e2f08d86';
 
 export const UPGRADE_CAP_ID =
-  '0x60d6ebb1801a509d5127affe7ee077c5af9582b2e390ffb1aafcc61bb29e56ac';
+  '0x14c0983aa609ceda866127c0fc9621383c08f1b9a98cdf43773ec63895a0725c';
 
 export const DISPLAY_ID =
-  '0xaaf0443730338f932b8e20094478c39c7345d2e3cc55c983ff5ff3ece27d0258';
+  '0xb63c8682e97e1bb0a61811346ccd35be4795d6de64f0a05c7724e2b16ed0cf8c';
 
 export const DIVING_SOFT_SHELL_CLAM = 101;
 export const DIVING_SOFT_SHELL_CLAM_TIME = 10;
@@ -70,7 +72,9 @@ export const SKILL_IMAGES = {
 export const SKILLS_CONFIG = {
   maxActivityDurationSeconds: 7200, // 2 hours
   skills: {
+    // skill
     diving: {
+      // activity
       101: {
         name: 'Soft shell clam',
         type: ITEM_TYPE.SOFT_SHELL_CLAM,

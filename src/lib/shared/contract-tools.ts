@@ -2,6 +2,8 @@ import { testnetWalletAdapter } from '@builders-of-stuff/svelte-sui-wallet-adapt
 import { Transaction } from '@mysten/sui/transactions';
 
 import { PACKAGE_ID } from '$lib/shared/shared.constant';
+import { appState } from './state.svelte';
+import { ITEM_TYPE } from './shared.type';
 
 const walletAdapter = testnetWalletAdapter;
 
@@ -66,6 +68,100 @@ export const startActivity = async (code: number, tuskpetObjectId: string) => {
         showRawInput: true
       }
     });
+
+    console.log('executedTx: ', executedTx);
+    return executedTx;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+/**
+ * @TODO need to add crafting restrictions on time, both frontend and smart contract
+ */
+export const startCraftingActivity = async (
+  code: number,
+  quantity: number,
+  tuskpetObjectId: string
+) => {
+  const tx = new Transaction();
+
+  let target;
+  if (code === 301) {
+    target = 'consume_snowman_reqs';
+  }
+  if (code === 302) {
+    target = 'consume_ice_helmet_reqs';
+  }
+  if (code === 303) {
+    target = 'consume_tusk_blades_reqs';
+  }
+
+  tx.moveCall({
+    target: `${PACKAGE_ID}::tuskpet::${target}`,
+    arguments: [tx.pure.u64(quantity), tx.object(`${tuskpetObjectId}`)]
+  });
+
+  tx.moveCall({
+    target: `${PACKAGE_ID}::tuskpet::start_activity`,
+    arguments: [
+      tx.pure.u64(code),
+      tx.object(`${tuskpetObjectId}`),
+      // clock object
+      tx.object('0x6')
+    ]
+  });
+
+  try {
+    const { bytes, signature } = await walletAdapter.signTransaction(tx as any, {});
+
+    const executedTx = await walletAdapter.suiClient.executeTransactionBlock({
+      transactionBlock: bytes,
+      signature: signature,
+      options: {
+        showEffects: true,
+        showEvents: true,
+        showObjectChanges: true,
+        showInput: true,
+        showRawInput: true
+      }
+    });
+
+    if (code === 301) {
+      appState.tuskpet.inventory = appState.tuskpet.inventory?.map((item) => {
+        if (item.type === ITEM_TYPE.COMPACT_SNOW) {
+          let reqQuantity = quantity * 5;
+
+          item.quantity -= reqQuantity;
+        }
+
+        return item;
+      });
+    }
+
+    if (code === 302) {
+      appState.tuskpet.inventory = appState.tuskpet.inventory?.map((item) => {
+        if (item.type === ITEM_TYPE.ICE) {
+          let reqQuantity = quantity * 5;
+
+          item.quantity -= reqQuantity;
+        }
+
+        return item;
+      });
+    }
+
+    if (code === 303) {
+      appState.tuskpet.inventory = appState.tuskpet.inventory?.map((item) => {
+        if (item.type === ITEM_TYPE.BLUE_ICE) {
+          let reqQuantity = quantity * 10;
+
+          item.quantity -= reqQuantity;
+        }
+
+        return item;
+      });
+    }
 
     console.log('executedTx: ', executedTx);
     return executedTx;

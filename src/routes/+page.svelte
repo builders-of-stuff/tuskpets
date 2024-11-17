@@ -8,7 +8,9 @@
   import { SquareArrowOutUpRight } from 'lucide-svelte';
   import { toast } from 'svelte-sonner';
   import Reload from 'svelte-radix/Reload.svelte';
+
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import * as Carousel from '$lib/components/ui/carousel/index';
   import * as Card from '$lib/components/ui/card/index';
   import { Button } from '$lib/components/ui/button/index';
@@ -17,7 +19,12 @@
   import TuskPet258 from '$lib/assets/tuskpets-258px.png';
 
   import { PACKAGE_ID } from '$lib/shared/shared.constant';
-  import { toBlockExplorer, toReadableObjectId } from '$lib/shared/shared-tools';
+  import {
+    getSubdomain,
+    subdomainToObjectId,
+    toBlockExplorer,
+    toReadableObjectId
+  } from '$lib/shared/shared-tools';
   import { dropTuskpet, mintTuskpet } from '$lib/shared/contract-tools';
   import { appState, Tuskpet } from '$lib/shared/state.svelte';
   import { tuskpetObjectToTuskpet } from '$lib/shared/mappers';
@@ -121,11 +128,34 @@
   };
 
   // === Effects ===
+
+  /**
+   * Walrus view
+   */
+  $effect(() => {
+    const tuskpetId = subdomainToObjectId(getSubdomain($page.url.hostname) as any);
+
+    console.log('tuskpetId: ', tuskpetId);
+
+    if (tuskpetId) {
+      appState.isWalrusView = true;
+
+      untrack(() => {
+        (async () => {
+          await handlePlay(tuskpetId);
+        })();
+      });
+    }
+  });
+
   /**
    * Fetch existing walrus upon connect
    */
   $effect(() => {
-    if (!walletAdapter.isConnected || hasCheckedOwnedObjects) {
+    if (
+      !walletAdapter.isConnected ||
+      (hasCheckedOwnedObjects && appState.isWalrusView)
+    ) {
       return;
     }
 

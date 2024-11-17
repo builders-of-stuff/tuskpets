@@ -119,6 +119,7 @@ export class Tuskpet {
 class AppState {
   tuskpet = $state({} as any);
   hasTuskpet = $derived(!!this.tuskpet?.id);
+  isWalrusView = $state(false);
 
   constructor() {
     this.tuskpet = new Tuskpet({});

@@ -17,7 +17,10 @@
   const isMobile = new IsMobile();
 
   $effect(() => {
-    if (!appState.hasTuskpet || !walletAdapter.isConnected) {
+    if (
+      !appState.hasTuskpet ||
+      (!walletAdapter.isConnected && !appState.isWalrusView)
+    ) {
       goto('/');
     }
   });

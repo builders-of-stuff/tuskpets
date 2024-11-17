@@ -1,4 +1,13 @@
 import {
+  isValidSuiObjectId,
+  isValidSuiAddress,
+  fromB64,
+  fromHEX,
+  toHEX
+} from '@mysten/sui/utils';
+import baseX from 'base-x';
+
+import {
   LEVEL_2_XP,
   LEVEL_3_XP,
   LEVEL_4_XP,
@@ -50,6 +59,9 @@ import {
   LEVEL_50_XP
 } from './shared.constant';
 
+const BASE36 = '0123456789abcdefghijklmnopqrstuvwxyz';
+const b36 = baseX(BASE36);
+
 export const toReadableObjectId = (objectId: string) => {
   // e.g. "0x3ac65090c7fd9582ac9c06ab28fb45a22f0fc87c3d31f159920c3506041b7f9a"
   // to "0x3ac6...7f9a"
@@ -74,6 +86,31 @@ export const camelCaseKeys = (object) => {
     ])
   );
 };
+
+export function getSubdomain(hostname: string) {
+  const parts = hostname.split('.');
+
+  if (parts.length > 2) {
+    return parts[0];
+  }
+
+  return null;
+}
+
+export function subdomainToObjectId(subdomain: string): string | null {
+  if (!subdomain) {
+    return null;
+  }
+
+  const objectId = '0x' + toHEX(b36.decode(subdomain?.toLowerCase()));
+  console.log(
+    'obtained object id: ',
+    objectId,
+    isValidSuiObjectId(objectId),
+    isValidSuiAddress(objectId)
+  );
+  return isValidSuiObjectId(objectId) ? objectId : null;
+}
 
 export const formatSeconds = (seconds: number) => {
   const differenceInMinutes = seconds / 60;

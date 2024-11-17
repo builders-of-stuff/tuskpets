@@ -190,6 +190,10 @@
       toast.error('Activity failed to finish');
     }
   };
+
+  $effect(() => {
+    console.log('appState: ', appState);
+  });
 </script>
 
 <div class="container mx-auto p-4">

@@ -23,7 +23,8 @@
     getSubdomain,
     subdomainToObjectId,
     toBlockExplorer,
-    toReadableObjectId
+    toReadableObjectId,
+    walrusLink
   } from '$lib/shared/shared-tools';
   import { dropTuskpet, mintTuskpet } from '$lib/shared/contract-tools';
   import { appState, Tuskpet } from '$lib/shared/state.svelte';
@@ -279,7 +280,11 @@
                 {:else}
                   <Button onclick={() => handlePlay(pet)}>Play</Button>
                 {/if}
-                <!-- <Button>View on Walrus</Button> -->
+                <Button>
+                  <a href={walrusLink(pet)} target="_blank" rel="noopener noreferrer">
+                    View on walrus
+                  </a>
+                </Button>
                 <Button onclick={() => handleDeleteTuskpet(pet)} variant="destructive">
                   Delete
                 </Button>

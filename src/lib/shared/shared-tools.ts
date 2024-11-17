@@ -112,6 +112,10 @@ export function subdomainToObjectId(subdomain: string): string | null {
   return isValidSuiObjectId(objectId) ? objectId : null;
 }
 
+export function walrusLink(id: string): string {
+  return 'https://' + b36.encode(fromHEX(id.substring(2))) + '.walrus.site';
+}
+
 export const formatSeconds = (seconds: number) => {
   const differenceInMinutes = seconds / 60;
   const differenceInHours = seconds / (60 * 60);

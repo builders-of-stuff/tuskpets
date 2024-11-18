@@ -6,7 +6,11 @@ Mint a tuskpet (testnet), level skills, aquire items.
 
 Each tuskpet also comes with its own shareable walrus-site.
 
-tuskpets.buildersofstuff.com
+https://tuskpets.buildersofstuff.com
+
+Example tuskpet:
+
+https://242u79u2hsuwjppi75fb5llcosru2pr89adg9d0fbrkatixi7i.walrus.site
 
 ## Steps to deploy from scratch
 

@@ -1,6 +1,6 @@
 # Tuskpets
 
-Idle RPG POC on Sui & Walrus (testnet)
+Idle RPG on Sui & Walrus (testnet)
 
 Mint a tuskpet (testnet), level skills, aquire items.
 

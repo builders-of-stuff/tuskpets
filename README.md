@@ -1,3 +1,13 @@
+# Tuskpets
+
+Idle RPG POC on Sui & Walrus (testnet)
+
+Mint a tuskpet (testnet), level skills, aquire items.
+
+Each tuskpet also comes with its own shareable walrus-site.
+
+tuskpets.buildersofstuff.com
+
 ## Steps
 
 1. Build

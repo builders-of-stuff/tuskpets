@@ -12,7 +12,7 @@ const BASE36: vector<u8> = b"0123456789abcdefghijklmnopqrstuvwxyz";
 
 // Update to this walrus site once deployed
 const VISUALIZATION_SITE: address =
-    @0x554c708a0e592b5d57b83c7cef9bc2a56376f76ce96f36a7a2fa9889cffe3896;
+    @0xed0c43502fe8c8bb97ef826b86ea561e6dcef86d66aa91a092242f519850b7f5;
 
 const EBusyWalrus: u64 = 0;
 const EIdleWalrus: u64 = 1;

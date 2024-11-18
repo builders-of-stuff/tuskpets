@@ -29,3 +29,5 @@ https://242u79u2hsuwjppi75fb5llcosru2pr89adg9d0fbrkatixi7i.walrus.site
 - "Maps"
 - Fixing timer for crafting (both frontend & on-chain)
 - More stuff
+
+Inspired by Idle MMO

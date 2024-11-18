@@ -285,9 +285,9 @@
                     View on walrus
                   </a>
                 </Button>
-                <Button onclick={() => handleDeleteTuskpet(pet)} variant="destructive">
+                <!-- <Button onclick={() => handleDeleteTuskpet(pet)} variant="destructive">
                   Delete
-                </Button>
+                </Button> -->
               </div>
             </Carousel.Item>
           {/each}

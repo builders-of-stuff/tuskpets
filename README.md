@@ -10,7 +10,7 @@ https://tuskpets.buildersofstuff.com
 
 Example tuskpet:
 
-https://242u79u2hsuwjppi75fb5llcosru2pr89adg9d0fbrkatixi7i.walrus.site
+https://1byb41wq7alq30i1ays5j1lx3ild1o76p747a4i0d3detnnrci.walrus.site
 
 ## Steps to deploy from scratch
 

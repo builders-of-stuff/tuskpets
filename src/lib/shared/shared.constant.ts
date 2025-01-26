@@ -16,18 +16,18 @@ import { ITEM_TYPE } from './shared.type';
 // export const PACKAGE_ID =
 //   '0x5d26d1a6d75745e1cae29e28e4b96fc500ee92e5f588a4b59da5af5f187e6cc8';
 export const PACKAGE_ID =
-  '0xe67902db096a3d1dae99b9a99a60c0d3210b06d377f11a55b6ffe57a96412894';
+  '0x35e2ba1ffcd1fa571ce55a4af7e0329f82dbfea45ea1915c42b4194adb4a4bad';
 
 export const PUBLISHER_ID =
-  '0xd83712b5dd8a9a17883add9f4ab206b184836301f77ac9777ca02de88499d130';
+  '0xefc218ad21143b5a977a6c6015c940636761249c849f35bd218a0e16c4298c47';
 
 export const UPGRADE_CAP_ID =
-  '0x1e74b7c0ecbb0414dbe017684ef66f3e5133e86c4c66e85ff0aa64308a02a161';
+  '0x09b7f8586596fad35ce235cfdd5d5e4e36077994cd534fefecce1491d5f82a61';
 
 export const DISPLAY_ID =
-  '0x99c7807483004e43c32df7dc81424a458de3e605e1165fcc95f57498f9b35bd8';
+  '0x2ea1a5cdd4da802ebe544f33677e57942e899584560d2130c60ec68ecae55c3e';
 
-// https://5woz9wbuwb0llbre90btrcjqerob8nve95kepj9wn3olr2i1v9.walrus.site
+// https://aw9ss7v8uedqd1r66b0bov6fi6vy8jgd27wb0p4pzp0e494kb.walrus.site
 export const walrusSiteId =
   '0xed0c43502fe8c8bb97ef826b86ea561e6dcef86d66aa91a092242f519850b7f5';
 

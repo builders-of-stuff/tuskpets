@@ -6,7 +6,7 @@ Mint a tuskpet (testnet), level skills, aquire items.
 
 Each tuskpet also comes with its own shareable walrus-site.
 
-https://tuskpets.buildersofstuff.com
+https://tuskpets.walrus.site
 
 Example tuskpet:
 
